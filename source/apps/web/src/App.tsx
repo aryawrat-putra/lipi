@@ -1,34 +1,38 @@
-import { Button } from "@repo/ui/components/button";
-
 import "@repo/ui/styles/globals.css";
-import { NavLink, Routes, Route } from "react-router";
-import Dashboard from "./pages/dashboard";
-import Trash from "./pages/trash";
-import Files from "./pages/files";
+
+import NotFound from "./pages/not-found";
+import Error from "./pages/error";
+import Loading from "./pages/loading";
+import { Route, Routes } from "react-router";
+import LoginPage from "./pages/unprotected/login";
+import SignupPage from "./pages/unprotected/signup";
+import RecoverPage from "./pages/unprotected/recover";
+
+const AUTHENTICATED = false;
 
 function App() {
-  return (
-    <section className="container mx-auto p-4">
-      <h1 className="text-xl font-bold mb-2">Layout</h1>
-      <div className="space-x-4">
-        <Button variant='link'>
-          <NavLink className={({ isActive }) => { return isActive ? 'text-teal-500' : '' }} to='/'>Dashboard</NavLink>
-        </Button>
-        <Button variant='link'>
-          <NavLink className={({ isActive }) => { return isActive ? 'text-teal-500' : '' }} to='/trash'>Trash</NavLink>
-        </Button>
-        <Button variant='link'>
-          <NavLink className={({ isActive }) => { return isActive ? 'text-teal-500' : '' }} to='/files'>Files</NavLink>
-        </Button>
-      </div>
-
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/trash" element={<Trash />} />
-        <Route path="/files" element={<Files />} />
-      </Routes>
-    </section>
-  );
+  if (AUTHENTICATED) {
+    return (
+      <section>
+        <Routes>
+          <Route errorElement={<Error />} path="*" element={<NotFound />} />
+        </Routes>
+      </section>
+    )
+  } else {
+    return (
+      <section>
+        {/*  */}
+        {/* */}
+        <Routes>
+          <Route errorElement={<Error />} path="/" element={<LoginPage />} />
+          <Route errorElement={<Error />} path="/signup" element={<SignupPage />} />
+          <Route errorElement={<Error />} path="/recover" element={<RecoverPage />} />
+          <Route errorElement={<Error />} path="*" element={<NotFound />} />
+        </Routes>
+      </section>
+    )
+  }
 }
 
 export default App;
