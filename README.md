@@ -70,3 +70,6 @@ Lipi flips that model — giving you **AI superpowers without surveillance**.
 To become the **AI-native, privacy-first workspace** for the next generation of thinkers and teams — where writing, collaboration, and intelligence coexist securely.
 
 > In a world where everything is tracked, **Lipi gives you your thoughts back.**
+
+## 🚀 **Credits:**
+* to @evgenius1424 for creating the turborepo template.
