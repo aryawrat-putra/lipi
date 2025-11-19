@@ -22,6 +22,7 @@ import DocumentSettingsPage from "./pages/protected/document/settings";
 import DocumentsVersionsPage from "./pages/protected/document/versions";
 
 import NotFound from "./pages/not-found";
+import LogoutPage from "./pages/protected/dashboard/logout";
 // import Error from "./pages/error";
 // import Loading from "./pages/loading";
 
@@ -30,22 +31,21 @@ const AUTHENTICATED = true;
 function App() {
   if (AUTHENTICATED) {
     return (
-      <section>
-        <Routes>
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route index element={<DashboardPage />} />
-            <Route path="activity" element={<ActivityPage />} />
-            <Route path="favorites" element={<FavoritesPage />} />
-            <Route path="notifications" element={<NotificationPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-            <Route path="trash" element={<TrashPage />} />
-          </Route>
-          <Route path="document/:docId" element={<DocumentPage />} />
-          <Route path="document/:docId/settings" element={<DocumentSettingsPage />} />
-          <Route path="document/:docId/versions" element={<DocumentsVersionsPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </section>
+      <Routes>
+        <Route path="/" element={<DashboardLayout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="activity" element={<ActivityPage />} />
+          <Route path="favorites" element={<FavoritesPage />} />
+          <Route path="notifications" element={<NotificationPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="trash" element={<TrashPage />} />
+          <Route path="logout" element={<LogoutPage />} />
+        </Route>
+        <Route path="document/:docId" element={<DocumentPage />} />
+        <Route path="document/:docId/settings" element={<DocumentSettingsPage />} />
+        <Route path="document/:docId/versions" element={<DocumentsVersionsPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     )
   } else {
     return (
