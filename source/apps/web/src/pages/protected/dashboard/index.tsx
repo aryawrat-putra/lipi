@@ -2,10 +2,9 @@ import { Button } from "@repo/ui/components/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@repo/ui/components/empty";
 import { CalendarDays, FileClock, FilePlus, ShieldUser, SlidersHorizontal } from "lucide-react";
 import { DocumentT } from "../../../config/types";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@repo/ui/components/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@repo/ui/components/dropdown-menu";
 import { useState } from "react";
 import DocumentCard from "../../../components/document/document-card";
-
 
 const Documents: DocumentT[] = [
     {
@@ -128,7 +127,6 @@ export default function DashboardPage() {
                     </div>
                 </div>
             </main>
-
         )
     } else {
         return (
@@ -146,6 +144,5 @@ export default function DashboardPage() {
                 </EmptyContent>
             </Empty>
         )
-
     }
 }
