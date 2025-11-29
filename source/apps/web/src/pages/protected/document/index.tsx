@@ -8,8 +8,9 @@ import { Input } from '@repo/ui/components/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@repo/ui/components/tooltip';
 import DocEditor from '../../../components/document/doc-editor';
 
-import { Collapsible, CollapsibleContent} from "@repo/ui/components/collapsible"
+import { Collapsible, CollapsibleContent } from "@repo/ui/components/collapsible"
 import { useState } from "react"
+import { LipiEditor } from "@repo/editor";
 
 export default function DocumentPage() {
   let { docId } = useParams();
@@ -89,7 +90,9 @@ export default function DocumentPage() {
         </Collapsible>
 
       </header>
-      <main className='min-h-screen'>page</main>
+      <main className='min-h-screen grid justify-center'>
+        <LipiEditor/> 
+      </main>
     </section>
   )
 }
