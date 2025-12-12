@@ -17,8 +17,8 @@ export default function DocumentPage() {
   const [isToolbarOpen, setIsToolbarOpen] = useState<boolean>(true);
 
   return (
-    <section className='container p-2 mx-auto'>
-      <header className='sticky top-0 left-0 backdrop-blur-lg'>
+    <section className='container mx-auto'>
+      <header className='sticky top-0 left-0 backdrop-blur-lg z-20'>
         <Collapsible
           open={isToolbarOpen}
           onOpenChange={setIsToolbarOpen}
@@ -90,8 +90,10 @@ export default function DocumentPage() {
         </Collapsible>
 
       </header>
-      <main className='min-h-screen grid justify-center'>
-        <LipiEditor/> 
+      <main className='min-h-screen grid justify-center bg-muted'>
+        <article className='prose dark:prose-invert'>
+          <LipiEditor />
+        </article>
       </main>
     </section>
   )
