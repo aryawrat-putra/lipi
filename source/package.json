@@ -1,13 +1,20 @@
 {
   "name": "lipi-sourcecode",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Lipi",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npm-run-all -p dev:webs dev:api",
+    "dev:webs": "npm --prefix webs run dev",
+    "dev:api": "npm --prefix api run dev",
+    "build": "npm --prefix webs run build",
+    "lint": "npm --prefix webs run lint && npm --prefix api run lint"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.12.1"
+  "packageManager": "pnpm@10.12.1",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "shell-quote": "^1.8.3"
+  }
 }
