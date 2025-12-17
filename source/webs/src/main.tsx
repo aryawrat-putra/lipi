@@ -25,13 +25,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+import { ThemeProvider } from "@/components/providers/theme-provider.tsx"
+
 // Render the app
 const rootElement = document.getElementById('app')
 if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <ThemeProvider defaultTheme="light" storageKey="lipi-ui-theme">
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </StrictMode>,
   )
 }

@@ -2,14 +2,24 @@
   "name": "api",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "postbuild": "tsc-alias",
+    "start": "node dist/index.js"
   },
   "dependencies": {
-    "hono": "^4.11.1"
+    "@hono/node-server": "^1.19.7",
+    "better-auth": "^1.4.7",
+    "dotenv": "^17.2.3",
+    "hono": "^4.11.1",
+    "kysely": "^0.28.9",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
-    "wrangler": "^4.4.0"
+    "@types/node": "^25.0.3",
+    "@types/pg": "^8.16.0",
+    "tsc-alias": "^1.8.16",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }

@@ -1,9 +1,53 @@
-import { Hono } from 'hono'
+import { Hono } from "hono";
+import { cors } from "hono/cors";
 
-const app = new Hono()
+import { auth } from "@/lib/auth";
+
+import { BETTER_AUTH_CLIENT_URL } from "@/constants";
+const app = new Hono();
+
+app
+  .use('*', logger((info) => {
+    const timestamp = new Date().toLocaleTimeString();
+    console.log(`[${timestamp}] : ${info}`)
+  }))
+  .use('*', cors({
+    origin: (origin) => {
+      // * Allow these origins
+      const allowedOrigins = [
+        BETTER_AUTH_CLIENT_URL,
+        // ! later on frontend url
+      ];
+
+      return allowedOrigins.includes(origin || '') ? origin : null;
+    },
+    credentials: true,
+    allowHeaders: ['Content-Type', 'Authorization'],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  }));
+
 
 app.get('/', (c) => {
-  return c.text('Hello Hono!')
+  return c.text('Hello World!!');
+});
+
+import { DB } from "@/constants";
+
+app.get('/env', (c) => {
+  return c.text(JSON.stringify(DB));
+});
+
+app.on(["POST", "GET"], "/api/auth/*", (c) =>
+  auth.handler(c.req.raw)
+);
+
+import { serve } from "@hono/node-server";
+import { logger } from "hono/logger";
+
+serve({
+  fetch: app.fetch,
+  port: 8787
+}, (info) => {
+  console.log(`API live on http://localhost:${info.port}`)
 })
 
-export default app
