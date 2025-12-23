@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { useTheme } from "../../../state/theme-provider"
+import { useTheme } from "@/components/providers/theme-provider"
 
 export function PreferencesSettings() {
     const { setTheme, theme } = useTheme()

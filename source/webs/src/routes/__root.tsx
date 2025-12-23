@@ -7,10 +7,16 @@ import ErrorPage from '@/components/pages/error'
 import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createRootRoute({
-  component: () => (
+  component: RootLayout,
+  notFoundComponent: () => <NotFoundPage />,
+  errorComponent: ({ ...props }) => <ErrorPage {...props} />,
+})
+
+function RootLayout() {
+  return (
     <>
       <Outlet />
-       <Toaster />
+      <Toaster />
       <TanStackDevtools
         config={{
           position: 'bottom-right',
@@ -23,8 +29,5 @@ export const Route = createRootRoute({
         ]}
       />
     </>
-  ),
-  notFoundComponent: () => <NotFoundPage />,
-  errorComponent: ({ ...props }) => <ErrorPage {...props} />,
-
-})
+  )
+}

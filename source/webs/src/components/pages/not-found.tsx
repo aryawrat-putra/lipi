@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
 
 import { Home, MapPinXInside, RotateCcw } from "lucide-react";
-
+import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 
 export default function NotFoundPage() {
+    const isUserSignedIn = authClient.useSession().data?.user.id;
+
     return (
         <section className="container mx-auto p-4">
             <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -43,7 +45,7 @@ export default function NotFoundPage() {
                             size='sm'
                             asChild
                         >
-                            <Link to='/'>
+                            <Link to={isUserSignedIn ? '/dashboard' : '/'}>
                                 <Home className="size-4" />
                                 Go Home
                             </Link>

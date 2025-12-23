@@ -4,8 +4,8 @@ import {
     EmptyHeader,
     EmptyMedia,
     EmptyTitle,
-} from "@repo/ui/components/empty"
-import { Spinner } from "@repo/ui/components/spinner"
+} from "@/components/ui/empty"
+import { Spinner } from "@/components/ui/spinner"
 
 export default function LoadingPage() {
     return (

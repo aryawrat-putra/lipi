@@ -14,7 +14,16 @@ import { Route as RecoverRouteImport } from './routes/recover'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthTrashRouteImport } from './routes/_auth.trash'
+import { Route as AuthSettingsRouteImport } from './routes/_auth.settings'
+import { Route as AuthNotificationsRouteImport } from './routes/_auth.notifications'
+import { Route as AuthLogoutRouteImport } from './routes/_auth.logout'
+import { Route as AuthFavoritesRouteImport } from './routes/_auth.favorites'
 import { Route as AuthDashboardRouteImport } from './routes/_auth.dashboard'
+import { Route as AuthActivityRouteImport } from './routes/_auth.activity'
+import { Route as DocsDocIdIndexRouteImport } from './routes/docs/$docId/index'
+import { Route as DocsDocIdVersionsRouteImport } from './routes/docs/$docId/versions'
+import { Route as DocsDocIdHistoryRouteImport } from './routes/docs/$docId/history'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -40,10 +49,55 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthTrashRoute = AuthTrashRouteImport.update({
+  id: '/trash',
+  path: '/trash',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSettingsRoute = AuthSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthNotificationsRoute = AuthNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthLogoutRoute = AuthLogoutRouteImport.update({
+  id: '/logout',
+  path: '/logout',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthFavoritesRoute = AuthFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthDashboardRoute = AuthDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthRoute,
+} as any)
+const AuthActivityRoute = AuthActivityRouteImport.update({
+  id: '/activity',
+  path: '/activity',
+  getParentRoute: () => AuthRoute,
+} as any)
+const DocsDocIdIndexRoute = DocsDocIdIndexRouteImport.update({
+  id: '/docs/$docId/',
+  path: '/docs/$docId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsDocIdVersionsRoute = DocsDocIdVersionsRouteImport.update({
+  id: '/docs/$docId/versions',
+  path: '/docs/$docId/versions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsDocIdHistoryRoute = DocsDocIdHistoryRouteImport.update({
+  id: '/docs/$docId/history',
+  path: '/docs/$docId/history',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -51,14 +105,32 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/recover': typeof RecoverRoute
   '/signup': typeof SignupRoute
+  '/activity': typeof AuthActivityRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/favorites': typeof AuthFavoritesRoute
+  '/logout': typeof AuthLogoutRoute
+  '/notifications': typeof AuthNotificationsRoute
+  '/settings': typeof AuthSettingsRoute
+  '/trash': typeof AuthTrashRoute
+  '/docs/$docId/history': typeof DocsDocIdHistoryRoute
+  '/docs/$docId/versions': typeof DocsDocIdVersionsRoute
+  '/docs/$docId': typeof DocsDocIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/recover': typeof RecoverRoute
   '/signup': typeof SignupRoute
+  '/activity': typeof AuthActivityRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/favorites': typeof AuthFavoritesRoute
+  '/logout': typeof AuthLogoutRoute
+  '/notifications': typeof AuthNotificationsRoute
+  '/settings': typeof AuthSettingsRoute
+  '/trash': typeof AuthTrashRoute
+  '/docs/$docId/history': typeof DocsDocIdHistoryRoute
+  '/docs/$docId/versions': typeof DocsDocIdVersionsRoute
+  '/docs/$docId': typeof DocsDocIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -67,13 +139,50 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/recover': typeof RecoverRoute
   '/signup': typeof SignupRoute
+  '/_auth/activity': typeof AuthActivityRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
+  '/_auth/favorites': typeof AuthFavoritesRoute
+  '/_auth/logout': typeof AuthLogoutRoute
+  '/_auth/notifications': typeof AuthNotificationsRoute
+  '/_auth/settings': typeof AuthSettingsRoute
+  '/_auth/trash': typeof AuthTrashRoute
+  '/docs/$docId/history': typeof DocsDocIdHistoryRoute
+  '/docs/$docId/versions': typeof DocsDocIdVersionsRoute
+  '/docs/$docId/': typeof DocsDocIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/recover' | '/signup' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/recover'
+    | '/signup'
+    | '/activity'
+    | '/dashboard'
+    | '/favorites'
+    | '/logout'
+    | '/notifications'
+    | '/settings'
+    | '/trash'
+    | '/docs/$docId/history'
+    | '/docs/$docId/versions'
+    | '/docs/$docId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/recover' | '/signup' | '/dashboard'
+  to:
+    | '/'
+    | '/login'
+    | '/recover'
+    | '/signup'
+    | '/activity'
+    | '/dashboard'
+    | '/favorites'
+    | '/logout'
+    | '/notifications'
+    | '/settings'
+    | '/trash'
+    | '/docs/$docId/history'
+    | '/docs/$docId/versions'
+    | '/docs/$docId'
   id:
     | '__root__'
     | '/'
@@ -81,7 +190,16 @@ export interface FileRouteTypes {
     | '/login'
     | '/recover'
     | '/signup'
+    | '/_auth/activity'
     | '/_auth/dashboard'
+    | '/_auth/favorites'
+    | '/_auth/logout'
+    | '/_auth/notifications'
+    | '/_auth/settings'
+    | '/_auth/trash'
+    | '/docs/$docId/history'
+    | '/docs/$docId/versions'
+    | '/docs/$docId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -90,6 +208,9 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   RecoverRoute: typeof RecoverRoute
   SignupRoute: typeof SignupRoute
+  DocsDocIdHistoryRoute: typeof DocsDocIdHistoryRoute
+  DocsDocIdVersionsRoute: typeof DocsDocIdVersionsRoute
+  DocsDocIdIndexRoute: typeof DocsDocIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -129,6 +250,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/trash': {
+      id: '/_auth/trash'
+      path: '/trash'
+      fullPath: '/trash'
+      preLoaderRoute: typeof AuthTrashRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/settings': {
+      id: '/_auth/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthSettingsRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/notifications': {
+      id: '/_auth/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthNotificationsRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/logout': {
+      id: '/_auth/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof AuthLogoutRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/favorites': {
+      id: '/_auth/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof AuthFavoritesRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/dashboard': {
       id: '/_auth/dashboard'
       path: '/dashboard'
@@ -136,15 +292,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/activity': {
+      id: '/_auth/activity'
+      path: '/activity'
+      fullPath: '/activity'
+      preLoaderRoute: typeof AuthActivityRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/docs/$docId/': {
+      id: '/docs/$docId/'
+      path: '/docs/$docId'
+      fullPath: '/docs/$docId'
+      preLoaderRoute: typeof DocsDocIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/$docId/versions': {
+      id: '/docs/$docId/versions'
+      path: '/docs/$docId/versions'
+      fullPath: '/docs/$docId/versions'
+      preLoaderRoute: typeof DocsDocIdVersionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/$docId/history': {
+      id: '/docs/$docId/history'
+      path: '/docs/$docId/history'
+      fullPath: '/docs/$docId/history'
+      preLoaderRoute: typeof DocsDocIdHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AuthRouteChildren {
+  AuthActivityRoute: typeof AuthActivityRoute
   AuthDashboardRoute: typeof AuthDashboardRoute
+  AuthFavoritesRoute: typeof AuthFavoritesRoute
+  AuthLogoutRoute: typeof AuthLogoutRoute
+  AuthNotificationsRoute: typeof AuthNotificationsRoute
+  AuthSettingsRoute: typeof AuthSettingsRoute
+  AuthTrashRoute: typeof AuthTrashRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthActivityRoute: AuthActivityRoute,
   AuthDashboardRoute: AuthDashboardRoute,
+  AuthFavoritesRoute: AuthFavoritesRoute,
+  AuthLogoutRoute: AuthLogoutRoute,
+  AuthNotificationsRoute: AuthNotificationsRoute,
+  AuthSettingsRoute: AuthSettingsRoute,
+  AuthTrashRoute: AuthTrashRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
@@ -155,6 +351,9 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   RecoverRoute: RecoverRoute,
   SignupRoute: SignupRoute,
+  DocsDocIdHistoryRoute: DocsDocIdHistoryRoute,
+  DocsDocIdVersionsRoute: DocsDocIdVersionsRoute,
+  DocsDocIdIndexRoute: DocsDocIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
