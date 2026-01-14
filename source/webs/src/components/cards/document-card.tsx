@@ -13,7 +13,7 @@ export default function DocumentCard({ id, last_mod, name }: DocumentT) {
     return (
         <ContextMenu>
             <ContextMenuTrigger>
-                <Link to={`/document/${id}`}>
+                <Link to={`/docs/${id}`}>
                     <Card className='md:aspect-video hover:border hover:border-primary justify-between'>
                         <CardHeader>
                             <CardTitle className='leading-6'>{name}</CardTitle>
@@ -57,7 +57,7 @@ export default function DocumentCard({ id, last_mod, name }: DocumentT) {
                                     <DropdownMenuItem onClick={(e) => e.stopPropagation()}><Trash2 /> Delete</DropdownMenuItem>
                                     <DropdownMenuItem onClick={(e) => e.stopPropagation()}><FileHeart /> Favorite</DropdownMenuItem>
                                     <DropdownMenuItem onClick={(e) => e.stopPropagation()} asChild>
-                                        <Link to={`/document/${id}`} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link>
+                                        <Link to={`/docs/${id}`} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -72,7 +72,7 @@ export default function DocumentCard({ id, last_mod, name }: DocumentT) {
                 <ContextMenuItem><FilePen /> Rename</ContextMenuItem>
                 <ContextMenuItem><Trash2 /> Delete</ContextMenuItem>
                 <ContextMenuItem><FileHeart /> Favorite</ContextMenuItem>
-                <ContextMenuItem asChild><Link to={`/document/${id}`} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link></ContextMenuItem>
+                <ContextMenuItem asChild><Link to={`/docs/${id}`} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link></ContextMenuItem>
             </ContextMenuContent>
         </ContextMenu>
     )

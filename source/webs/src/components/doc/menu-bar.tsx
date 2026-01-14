@@ -3,16 +3,33 @@ import { AArrowDown, AArrowUp, ArrowBigRight, ArrowDown01, ArrowDown10, Blocks, 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
 import FilePlusCorner from "@/components/icons/FilePlusCorner"
+import { editorCommands } from "@/lib/tiptap-utils";
+import { Editor, useEditorState } from '@tiptap/react'
 
-type Props = {}
+type Props = {
+    editor: Editor;
+    setAdditionalDialog: (v: string) => void;
+}
 
-export default function DocMenubar({ }: Props) {
+export default function DocMenubar({ editor, setAdditionalDialog }: Props) {
+    const canChecks = useEditorState({
+        editor,
+        selector: ctx => {
+            return {
+                undo: ctx.editor.can().chain().focus().undo().run(),
+                redo: ctx.editor.can().chain().focus().redo().run(),
+                cutOrCopy: ctx.editor.state.selection.empty,
+            }
+        },
+    })
+    const cmd = editorCommands(editor);
+
     return (
         <Menubar>
             <MenubarMenu>
                 <MenubarTrigger>File</MenubarTrigger>
                 <MenubarContent>
-                    <MenubarItem><FilePlus /> New Tab</MenubarItem>
+                    <MenubarItem><FilePlus /> New Document</MenubarItem>
                     <MenubarItem><Files /> Make a Copy</MenubarItem>
 
                     <MenubarSeparator />
@@ -56,22 +73,22 @@ export default function DocMenubar({ }: Props) {
             <MenubarMenu>
                 <MenubarTrigger>Edit</MenubarTrigger>
                 <MenubarContent>
-                    <MenubarItem><Undo /> Undo  <MenubarShortcut>CTRL+Z</MenubarShortcut> </MenubarItem>
-                    <MenubarItem><Redo /> Redo<MenubarShortcut>CTRL+Y</MenubarShortcut> </MenubarItem>
+                    <MenubarItem disabled={!canChecks.undo} onClick={cmd.undo}><Undo /> Undo  <MenubarShortcut>CTRL+Z</MenubarShortcut> </MenubarItem>
+                    <MenubarItem disabled={!canChecks.redo} onClick={cmd.redo}><Redo /> Redo<MenubarShortcut>CTRL+Y</MenubarShortcut> </MenubarItem>
 
                     <MenubarSeparator />
 
-                    <MenubarItem><Scissors /> Cut  <MenubarShortcut>CTRL+X</MenubarShortcut> </MenubarItem>
-                    <MenubarItem><Copy /> Copy <MenubarShortcut>CTRL+C</MenubarShortcut> </MenubarItem>
-                    <MenubarItem><Clipboard /> Paste <MenubarShortcut>CTRL+V</MenubarShortcut> </MenubarItem>
-                    <MenubarItem><ClipboardPaste /> Paste without formatting<MenubarShortcut>CTRL+SHIFT+V</MenubarShortcut> </MenubarItem>
+                    <MenubarItem disabled={canChecks.cutOrCopy} onClick={() => { cmd.cut() }}><Scissors /> Cut  <MenubarShortcut>CTRL+X</MenubarShortcut> </MenubarItem>
+                    <MenubarItem disabled={canChecks.cutOrCopy} onClick={() => { cmd.copy() }}><Copy /> Copy <MenubarShortcut>CTRL+C</MenubarShortcut> </MenubarItem>
+                    <MenubarItem onClick={() => { cmd.pasteWithFormatting() }}><Clipboard /> Paste <MenubarShortcut>CTRL+V</MenubarShortcut> </MenubarItem>
+                    <MenubarItem onClick={() => { cmd.pastePlainText() }}><ClipboardPaste /> Paste without formatting<MenubarShortcut>CTRL+SHIFT+V</MenubarShortcut> </MenubarItem>
 
                     <MenubarSeparator />
-                    <MenubarItem><TextCursorInput />Select All<MenubarShortcut>CTRL+A</MenubarShortcut> </MenubarItem>
-                    <MenubarItem><Trash2 />Delete<MenubarShortcut>DELETE</MenubarShortcut> </MenubarItem>
+                    <MenubarItem onClick={() => { cmd.selectALl() }}><TextCursorInput />Select All<MenubarShortcut>CTRL+A</MenubarShortcut> </MenubarItem>
+                    <MenubarItem onClick={() => { cmd.deleteSelected() }}><Trash2 />Delete<MenubarShortcut>DELETE</MenubarShortcut> </MenubarItem>
 
                     <MenubarSeparator />
-                    <MenubarItem><TextSearch />Find and Replace<MenubarShortcut>CTRL+H</MenubarShortcut> </MenubarItem>
+                    <MenubarItem onClick={() => setAdditionalDialog('f-n-r')}><TextSearch />Find and Replace<MenubarShortcut>CTRL+H</MenubarShortcut> </MenubarItem>
                 </MenubarContent>
             </MenubarMenu>
 

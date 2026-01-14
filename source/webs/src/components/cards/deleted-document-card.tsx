@@ -12,7 +12,7 @@ export default function DeletedDocumentCard({ id, last_mod, name }: DocumentT) {
     return (
         <ContextMenu>
             <ContextMenuTrigger>
-                <Link to={`/document/${id}`}>
+                <Link to={`/docs/${id}`}>
                     <Card className='md:aspect-video hover:border hover:border-primary justify-between'>
                         <CardHeader>
                             <CardTitle className='leading-6'>{name}</CardTitle>
@@ -29,7 +29,7 @@ export default function DeletedDocumentCard({ id, last_mod, name }: DocumentT) {
                                     <DropdownMenuItem onClick={(e) => e.stopPropagation()}><ArchiveRestore /> Restore</DropdownMenuItem>
                                     <DropdownMenuItem onClick={(e) => e.stopPropagation()}><ArchiveX /> Delete Forever</DropdownMenuItem>
                                     <DropdownMenuItem onClick={(e) => e.stopPropagation()} asChild>
-                                        <Link to={`/document/${id}`} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link>
+                                        <Link to={`/docs/${id}`} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -42,7 +42,7 @@ export default function DeletedDocumentCard({ id, last_mod, name }: DocumentT) {
             <ContextMenuContent>
                 <ContextMenuItem><ArchiveRestore /> Restore</ContextMenuItem>
                 <ContextMenuItem><ArchiveX /> Delete Forever</ContextMenuItem>
-                <ContextMenuItem asChild><Link to={`/document/${id}`} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link></ContextMenuItem>
+                <ContextMenuItem asChild><Link to={`/docs/${id}`} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link></ContextMenuItem>
             </ContextMenuContent>
         </ContextMenu>
     )
