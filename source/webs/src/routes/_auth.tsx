@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Outlet, redirect } from '@tanstack/react-router'
+import { Outlet } from '@tanstack/react-router'
 
-import { authClient } from "@/lib/auth-client"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
 import Logo from '@/components/non-interactive/logo'
@@ -12,18 +11,6 @@ import NotFoundPage from '@/components/pages/not-found'
 import ErrorPage from '@/components/pages/error'
 
 export const Route = createFileRoute("/_auth")({
-    beforeLoad: async ({ location }) => {
-        const isUserID = (await authClient.getSession()).data?.session.id
-
-        if (!isUserID) {
-            throw redirect({
-                to: "/login",
-                search: {
-                    redirect: location.href,
-                },
-            })
-        }
-    },
     component: AuthLayout,
     notFoundComponent: () => <NotFoundPage />,
     errorComponent: ({ ...props }) => <ErrorPage {...props} />,

@@ -1,9 +1,12 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
+import 'dotenv/config';
+import { defineConfig } from 'drizzle-kit';
 import { DB } from "@/constants";
-import * as schema from "@/db/schema"
 
-export const db = drizzle({
-    connection: {
+export default defineConfig({
+    out: './drizzle',
+    schema: './src/db/schema.ts',
+    dialect: 'postgresql',
+    dbCredentials: {
         database: DB.database!,
         host: DB.host!,
         user: DB.user!,
@@ -14,5 +17,4 @@ export const db = drizzle({
             rejectUnauthorized: true
         },
     },
-    schema
 });

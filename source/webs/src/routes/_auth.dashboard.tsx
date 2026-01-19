@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_auth/dashboard')({
   component: DashboardPage,
@@ -8,9 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { CalendarDays, FileClock, FilePlus, ShieldUser, SlidersHorizontal } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner"
 import { useState } from "react";
 import type { DocumentT } from '@/helpers/types';
 import DocumentCard from '@/components/cards/document-card';
+import { useMutation } from '@tanstack/react-query';
 
 const Documents: DocumentT[] = [
   {
@@ -76,8 +78,30 @@ const Documents: DocumentT[] = [
 ];
 
 function DashboardPage() {
+  const navigate = useNavigate();
+
   const [sortByOwner, setSortByOwner] = useState('anyone');
   const [sortBy, setSortBy] = useState('modi')
+
+  const docMutation = useMutation({
+    mutationKey: ['create-document'],
+    mutationFn: () => { console.log('create ') },
+    onSuccess: (res) => {
+      // ? Navigate user to doc link
+      // navigate({ to: `/docs/${res.id}` });
+
+      // ? Inform user
+      toast.success("Your Document has been created");
+    },
+    onError: (e) => {
+      console.error('Failed to create doc!!!')
+      console.error(e);
+
+      toast.error("Failed to create document");
+
+    }
+  })
+
 
   if (Documents.length > 1) {
     return (
@@ -121,7 +145,7 @@ function DashboardPage() {
 
               {/* TODO : card to open here with filters like last 7,10,30 days OR between x to y date */}
               <Button variant='outline' size='default'><CalendarDays /> <span className="max-md:hidden">Filter By Date</span></Button>
-              <Button><FilePlus />New Document</Button>
+              <Button disabled={docMutation.isPending} onClick={() => { docMutation.mutate() }}><FilePlus />New Document</Button>
             </div>
           </div>
 

@@ -26,16 +26,30 @@ declare module '@tanstack/react-router' {
 }
 
 import { ThemeProvider } from "@/components/providers/theme-provider.tsx"
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Render the app
 const rootElement = document.getElementById('app')
 if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // TODO should remove in prod
+        refetchIntervalInBackground: false,
+        refetchOnWindowFocus: false,
+      }
+    }
+  })
+
   root.render(
     <StrictMode>
-      <ThemeProvider defaultTheme="light" storageKey="lipi-ui-theme">
-        <RouterProvider router={router} />
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider defaultTheme="light" storageKey="lipi-ui-theme">
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </QueryClientProvider>
     </StrictMode>,
   )
 }

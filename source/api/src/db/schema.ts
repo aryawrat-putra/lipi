@@ -1,76 +1,93 @@
-import type { Generated, Insertable, Selectable, Updateable } from 'kysely'
+import { relations } from "drizzle-orm";
+import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
 
-// Better-auth required tables
-export interface UserTable {
-    id: Generated<string>
-    name: string
-    email: string
-    emailVerified: boolean
-    image: string | null
-    createdAt: Generated<Date>
-    updatedAt: Generated<Date>
-}
+export const user = pgTable("user", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").default(false).notNull(),
+  image: text("image"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
 
-export interface SessionTable {
-    id: Generated<string>
-    userId: string
-    token: string
-    expiresAt: Date
-    ipAddress: string | null
-    userAgent: string | null
-    createdAt: Generated<Date>
-    updatedAt: Generated<Date>
-}
+export const session = pgTable(
+  "session",
+  {
+    id: text("id").primaryKey(),
+    expiresAt: timestamp("expires_at").notNull(),
+    token: text("token").notNull().unique(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+  },
+  (table) => [index("session_userId_idx").on(table.userId)],
+);
 
-export interface AccountTable {
-    id: Generated<string>
-    userId: string
-    accountId: string
-    providerId: string
-    accessToken: string | null
-    refreshToken: string | null
-    expiresAt: Date | null
-    password: string | null
-    createdAt: Generated<Date>
-    updatedAt: Generated<Date>
-}
+export const account = pgTable(
+  "account",
+  {
+    id: text("id").primaryKey(),
+    accountId: text("account_id").notNull(),
+    providerId: text("provider_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
+    idToken: text("id_token"),
+    accessTokenExpiresAt: timestamp("access_token_expires_at"),
+    refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+    scope: text("scope"),
+    password: text("password"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [index("account_userId_idx").on(table.userId)],
+);
 
-export interface VerificationTable {
-    id: Generated<string>
-    identifier: string
-    value: string
-    expiresAt: Date
-    createdAt: Generated<Date>
-    updatedAt: Generated<Date>
-}
+export const verification = pgTable(
+  "verification",
+  {
+    id: text("id").primaryKey(),
+    identifier: text("identifier").notNull(),
+    value: text("value").notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [index("verification_identifier_idx").on(table.identifier)],
+);
 
-// Your custom fields (extend user table)
-export interface ExtendedUserTable extends UserTable {
-    role: 'user' | 'admin'
-    isActive: boolean
-    lastLoginAt: Date | null
-}
+export const userRelations = relations(user, ({ many }) => ({
+  sessions: many(session),
+  accounts: many(account),
+}));
 
-export interface Database {
-    user: ExtendedUserTable
-    session: SessionTable
-    account: AccountTable
-    verification: VerificationTable
-}
+export const sessionRelations = relations(session, ({ one }) => ({
+  user: one(user, {
+    fields: [session.userId],
+    references: [user.id],
+  }),
+}));
 
-/* Helper types */
-export type User = Selectable<ExtendedUserTable>
-export type NewUser = Insertable<ExtendedUserTable>
-export type UserUpdate = Updateable<ExtendedUserTable>
-
-export type Session = Selectable<SessionTable>
-export type NewSession = Insertable<SessionTable>
-export type SessionUpdate = Updateable<SessionTable>
-
-export type Account = Selectable<AccountTable>
-export type NewAccount = Insertable<AccountTable>
-export type AccountUpdate = Updateable<AccountTable>
-
-export type Verification = Selectable<VerificationTable>
-export type NewVerification = Insertable<VerificationTable>
-export type VerificationUpdate = Updateable<VerificationTable>
+export const accountRelations = relations(account, ({ one }) => ({
+  user: one(user, {
+    fields: [account.userId],
+    references: [user.id],
+  }),
+}));
