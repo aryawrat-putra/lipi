@@ -9,3 +9,9 @@ For better-auth database schema generation, it will generate in a file
 ```bash
 pnpm dlx @better-auth/cli generate
 ```
+
+Test user 
+```bash
+sara@dhurandhar.com:dhurandhar
+harmanpreet@mi.com:harmanpreet
+```

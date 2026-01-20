@@ -20,7 +20,6 @@ import { Route as AuthNotificationsRouteImport } from './routes/_auth.notificati
 import { Route as AuthLogoutRouteImport } from './routes/_auth.logout'
 import { Route as AuthFavoritesRouteImport } from './routes/_auth.favorites'
 import { Route as AuthDashboardRouteImport } from './routes/_auth.dashboard'
-import { Route as AuthActivityRouteImport } from './routes/_auth.activity'
 import { Route as DocsDocIdIndexRouteImport } from './routes/docs/$docId/index'
 import { Route as DocsDocIdVersionsRouteImport } from './routes/docs/$docId/versions'
 import { Route as DocsDocIdHistoryRouteImport } from './routes/docs/$docId/history'
@@ -79,11 +78,6 @@ const AuthDashboardRoute = AuthDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthActivityRoute = AuthActivityRouteImport.update({
-  id: '/activity',
-  path: '/activity',
-  getParentRoute: () => AuthRoute,
-} as any)
 const DocsDocIdIndexRoute = DocsDocIdIndexRouteImport.update({
   id: '/docs/$docId/',
   path: '/docs/$docId/',
@@ -105,7 +99,6 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/recover': typeof RecoverRoute
   '/signup': typeof SignupRoute
-  '/activity': typeof AuthActivityRoute
   '/dashboard': typeof AuthDashboardRoute
   '/favorites': typeof AuthFavoritesRoute
   '/logout': typeof AuthLogoutRoute
@@ -121,7 +114,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/recover': typeof RecoverRoute
   '/signup': typeof SignupRoute
-  '/activity': typeof AuthActivityRoute
   '/dashboard': typeof AuthDashboardRoute
   '/favorites': typeof AuthFavoritesRoute
   '/logout': typeof AuthLogoutRoute
@@ -139,7 +131,6 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/recover': typeof RecoverRoute
   '/signup': typeof SignupRoute
-  '/_auth/activity': typeof AuthActivityRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
   '/_auth/favorites': typeof AuthFavoritesRoute
   '/_auth/logout': typeof AuthLogoutRoute
@@ -157,7 +148,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/recover'
     | '/signup'
-    | '/activity'
     | '/dashboard'
     | '/favorites'
     | '/logout'
@@ -173,7 +163,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/recover'
     | '/signup'
-    | '/activity'
     | '/dashboard'
     | '/favorites'
     | '/logout'
@@ -190,7 +179,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/recover'
     | '/signup'
-    | '/_auth/activity'
     | '/_auth/dashboard'
     | '/_auth/favorites'
     | '/_auth/logout'
@@ -292,13 +280,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_auth/activity': {
-      id: '/_auth/activity'
-      path: '/activity'
-      fullPath: '/activity'
-      preLoaderRoute: typeof AuthActivityRouteImport
-      parentRoute: typeof AuthRoute
-    }
     '/docs/$docId/': {
       id: '/docs/$docId/'
       path: '/docs/$docId'
@@ -324,7 +305,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthRouteChildren {
-  AuthActivityRoute: typeof AuthActivityRoute
   AuthDashboardRoute: typeof AuthDashboardRoute
   AuthFavoritesRoute: typeof AuthFavoritesRoute
   AuthLogoutRoute: typeof AuthLogoutRoute
@@ -334,7 +314,6 @@ interface AuthRouteChildren {
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
-  AuthActivityRoute: AuthActivityRoute,
   AuthDashboardRoute: AuthDashboardRoute,
   AuthFavoritesRoute: AuthFavoritesRoute,
   AuthLogoutRoute: AuthLogoutRoute,

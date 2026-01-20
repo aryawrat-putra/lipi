@@ -6,9 +6,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
-import type { DocumentT } from '@/helpers/types'
+import { document } from '../../../../api/src/db/schema';
 
-export default function DocumentCard({ id, last_mod, name }: DocumentT) {
+
+export default function DocumentCard({ id, title }: typeof document.$inferSelect) {
 
     return (
         <ContextMenu>
@@ -16,7 +17,7 @@ export default function DocumentCard({ id, last_mod, name }: DocumentT) {
                 <Link to={`/docs/${id}`}>
                     <Card className='md:aspect-video hover:border hover:border-primary justify-between'>
                         <CardHeader>
-                            <CardTitle className='leading-6'>{name}</CardTitle>
+                            <CardTitle className='leading-6'>{title}</CardTitle>
                             {/* TOOD show when added in favorite */}
                             {/* <CardAction> <Heart className='fill-primary text-primary' /> </CardAction> */}
                         </CardHeader>

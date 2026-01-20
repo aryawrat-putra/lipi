@@ -1,11 +1,5 @@
 import * as z from "zod";
 
-const DocumentType = z.object({
-    id: z.string(),
-    last_mod: z.iso.datetime().default(new Date(Date.now()).toUTCString()),
-    name: z.string().min(3).max(64).default('Untitled Doc'),
-});
-
 const ActivityType = z.object({
     id: z.string(),
     type: z.enum(['edited', 'changed name', 'shared']),
@@ -25,6 +19,5 @@ const NotificationsType = z.object({
     icon: z.custom<LucideIcon>(),
 })
 
-export type DocumentT = z.infer<typeof DocumentType>;
 export type ActivityT = z.infer<typeof ActivityType>;
 export type NotificationsT = z.infer<typeof NotificationsType>;

@@ -1,10 +1,11 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index, json, integer, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, index, json, integer, uniqueIndex, varchar } from "drizzle-orm/pg-core";
+import { createId } from '@paralleldrive/cuid2';
 
 // ==================== AUTH TABLES ====================
 
 export const user = pgTable("user", {
-  id: text("id").primaryKey(),
+  id: varchar('id', { length: 128 }).$defaultFn(() => createId()).unique(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
@@ -19,7 +20,7 @@ export const user = pgTable("user", {
 export const session = pgTable(
   "session",
   {
-    id: text("id").primaryKey(),
+    id: varchar('id', { length: 128 }).$defaultFn(() => createId()).unique(),
     expiresAt: timestamp("expires_at").notNull(),
     token: text("token").notNull().unique(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -38,7 +39,7 @@ export const session = pgTable(
 export const account = pgTable(
   "account",
   {
-    id: text("id").primaryKey(),
+    id: varchar('id', { length: 128 }).$defaultFn(() => createId()).unique(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
     userId: text("user_id")
@@ -62,7 +63,7 @@ export const account = pgTable(
 export const verification = pgTable(
   "verification",
   {
-    id: text("id").primaryKey(),
+    id: varchar('id', { length: 128 }).$defaultFn(() => createId()).unique(),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
     expiresAt: timestamp("expires_at").notNull(),
@@ -78,7 +79,7 @@ export const verification = pgTable(
 // ==================== CORE TABLES ====================
 
 export const project = pgTable('project', {
-  id: text('id').primaryKey(),
+  id: varchar('id', { length: 128 }).$defaultFn(() => createId()).unique(),
   ownerId: text('owner_id').notNull().references(() => user.id, { onDelete: "cascade" }),
   name: text('name').notNull(),
   description: text('description'),
@@ -95,9 +96,10 @@ export const project = pgTable('project', {
 ]);
 
 export const document = pgTable('document', {
-  id: text('id').primaryKey(),
-  projectId: text('project_id').notNull().references(() => project.id, { onDelete: 'cascade' }),
+  id: varchar('id', { length: 128 }).$defaultFn(() => createId()).unique(),
+  projectId: text('project_id').references(() => project.id, { onDelete: 'cascade' }),
   createdByUserId: text('created_by_user_id').references(() => user.id, { onDelete: 'set null' }),
+  editorsId: text('editors_user_id').array().notNull().default([]),
   lastEditedByUserId: text('last_edited_by_user_id').references(() => user.id, { onDelete: 'set null' }),
   title: text('title').notNull(),
   allVersionsIds: text('all_versions_ids').array().notNull().default([]),
@@ -115,7 +117,7 @@ export const document = pgTable('document', {
 ]);
 
 export const documentVersion = pgTable('document_version', {
-  id: text('id').primaryKey(),
+  id: varchar('id', { length: 128 }).$defaultFn(() => createId()).unique(),
   documentId: text('document_id').references(() => document.id, { onDelete: 'cascade' }).notNull(),
   content: json('content').notNull(),
   versionNumber: integer('version_number').notNull().default(1),
@@ -128,7 +130,7 @@ export const documentVersion = pgTable('document_version', {
 ]);
 
 export const subscription = pgTable('subscription', {
-  id: text('id').primaryKey(),
+  id: varchar('id', { length: 128 }).$defaultFn(() => createId()).unique(),
   userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }).notNull().unique(),
   plan: text('plan', { enum: ['free', 'pro'] }).notNull(),
   status: text('status', { enum: ['active', 'canceled', 'trial', 'past_due'] }).notNull(),

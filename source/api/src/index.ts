@@ -2,9 +2,14 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 
 import { auth } from "@/lib/auth";
-
 import { BETTER_AUTH_CLIENT_URL } from "@/constants";
+
 const app = new Hono();
+declare module 'hono' {
+  interface ContextVariableMap {
+    session: typeof auth.$Infer.Session
+  }
+}
 
 app
   .use('*', logger((info) => {
@@ -26,7 +31,6 @@ app
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   }));
 
-
 app.get('/', (c) => {
   return c.text('Hello World!!');
 });
@@ -40,6 +44,21 @@ app.get('/env', (c) => {
 app.on(["POST", "GET"], "/api/auth/*", (c) =>
   auth.handler(c.req.raw)
 );
+
+import { projectController } from "@/controllers/project";
+import { documentController } from "@/controllers/document";
+import { documentVersionController } from "@/controllers/document-version";
+import { CheckAuthenticity } from "@/controllers/auth-middleware";
+
+app.get('/api/status', (c) =>
+  c.json({ status: 'ok', service: 'lipi-api' })
+)
+
+app.use('/api/*', CheckAuthenticity)
+app.route('/api/document', documentController)
+app.route('/api/project', projectController)
+app.route('/api/document-version', documentVersionController)
+
 
 import { serve } from "@hono/node-server";
 import { logger } from "hono/logger";

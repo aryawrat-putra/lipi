@@ -1,0 +1,1 @@
+ALTER TABLE "document" ADD COLUMN "editors_user_id" text[] DEFAULT '{}' NOT NULL;

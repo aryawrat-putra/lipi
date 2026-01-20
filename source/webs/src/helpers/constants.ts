@@ -1,4 +1,4 @@
-import { Bell, Bolt, BookHeart, Footprints, LayoutDashboard, Trash2 } from "lucide-react";
+import { Bell, Bolt, BookHeart, Folder,  LayoutDashboard, Trash2 ,File} from "lucide-react";
 
 // Sidebar Menu Links
 export const MenuLinks = [
@@ -8,9 +8,14 @@ export const MenuLinks = [
     icon: LayoutDashboard,
   },
   {
-    title: "activity",
-    url: "/activity",
-    icon: Footprints,
+    title: "projects",
+    url: "/projects",
+    icon: Folder,
+  },
+  {
+    title: "documents",
+    url: "/documents",
+    icon: File,
   },
   {
     title: "favorites",

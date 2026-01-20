@@ -15,6 +15,27 @@
       "when": 1768818710305,
       "tag": "0001_reflective_lake",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768820544919,
+      "tag": "0002_red_scalphunter",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1768824895129,
+      "tag": "0003_spotty_cargill",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1768914852708,
+      "tag": "0004_youthful_lily_hollister",
+      "breakpoints": true
     }
   ]
 }
