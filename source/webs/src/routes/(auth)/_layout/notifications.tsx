@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_auth/notifications')({
+export const Route = createFileRoute('/(auth)/_layout/notifications')({
     component: RouteComponent,
 })
 
@@ -34,7 +34,7 @@ function RouteComponent() {
     if (initialNotifications.length > 1) {
         return (
             <main className="min-h-screen py-4">
-                <Tabs value={filter} onValueChange={(v) => setFilter(v as 'all' | 'unread')} className="w-full sm:w-auto">
+                <Tabs value={filter} onValueChange={(v) => setFilter(v as 'all' | 'unread')} className='w-full sm:w-auto'>
 
                     {/* Header */}
                     <div className="flex items-center justify-between mb-8 max-sm:flex-wrap max-sm:gap-2">
@@ -142,7 +142,7 @@ const initialNotifications: NotificationsT[] = [
     id: '3',
     type: 'success',
     title: 'Pull Request Merged',
-    description: 'Your pull request #156 "Add dark mode support" has been successfully merged.',
+    description: 'Your pull request #156 Add dark mode support has been successfully merged.',
     timestamp: '3 hours ago',
     read: false,
     icon: GitPullRequest

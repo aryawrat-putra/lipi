@@ -1,13 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_auth/trash')({
+export const Route = createFileRoute('/(auth)/_layout/trash')({
   component: RouteComponent,
 })
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Trash, FileX } from "lucide-react";
-import type { DocumentT } from '@/helpers/types';
 import DeletedDocumentCard from '@/components/cards/deleted-document-card';
 
 
@@ -53,7 +52,7 @@ function RouteComponent() {
   }
 };
 
-const initialTrashDocs: DocumentT[] = [
+const initialTrashDocs = [
   {
     id: "a1b2c3d4e5f6g7h8",
     last_mod: new Date("2024-10-25T10:00:00Z").toISOString(),

@@ -67,28 +67,28 @@ export default function UserMenu() {
                 <DropdownMenuGroup>
                     <DropdownMenuLabel>Other</DropdownMenuLabel>
                     <DropdownMenuItem className="cursor-pointer" asChild>
-                        <Link to='#'>
+                        <Link to='/'>
                             <DollarSign className="mr-2 h-4 w-4" />
                             <span>Pricing</span>
                             <ExternalLink className="ml-auto h-3 w-3 opacity-50" />
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="cursor-pointer" asChild>
-                        <Link to='#'>
+                        <Link to='/'>
                             <BookOpen className="mr-2 h-4 w-4" />
                             <span>Documentation</span>
                             <ExternalLink className="ml-auto h-3 w-3 opacity-50" />
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="cursor-pointer" asChild>
-                        <Link to='#'>
+                        <Link to='/'>
                             <Users className="mr-2 h-4 w-4" />
                             <span>Community Forum</span>
                             <ExternalLink className="ml-auto h-3 w-3 opacity-50" />
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="cursor-pointer" asChild>
-                        <Link to='#'>
+                        <Link to='/'>
                             <HelpCircle className="mr-2 h-4 w-4" />
                             <span>Feedback</span>
                             <ExternalLink className="ml-auto h-3 w-3 opacity-50" />

@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router'
 
-import { documentPaginationAndFilters } from '../../../api/src/constants/types';
-export const Route = createFileRoute('/_auth/dashboard')({
+import { documentPaginationAndFilters } from '../../../../../api/src/constants/types';
+export const Route = createFileRoute('/(auth)/_layout/dashboard')({
   component: DashboardPage,
   validateSearch: (search) => documentPaginationAndFilters.parse(search),
 })
@@ -20,8 +20,8 @@ import SomethingWentWrong from '@/components/non-interactive/error';
 import { cn } from '@/lib/utils';
 
 function DashboardPage() {
-  const navigate = useNavigate();
-  const { page, search, sortBy, sortOrder, limit } = useSearch({ from: '/_auth/dashboard' });
+  const navigate = useNavigate({ from: '/(auth)/_layout/dashboard' });
+  const { page, search, sortBy, sortOrder, limit } = useSearch({ from: '/(auth)/_layout/dashboard' });
 
   const createDocument = useMutation({
     mutationKey: ['create-document'],
@@ -158,7 +158,7 @@ function DashboardPage() {
                       if (data.meta?.pagination?.hasPrevPage) {
                         navigate({
                           search: (prev) => ({ ...prev, page: data.meta?.pagination?.page! - 1 }),
-                          from: '/dashboard'
+                          from: '/(auth)/_layout/dashboard'
                         });
                       }
                     }}
@@ -177,7 +177,7 @@ function DashboardPage() {
                         onClick={() => {
                           navigate({
                             search: (prev) => ({ ...prev, page: pageNum }),
-                            from: '/dashboard'
+                          from: '/(auth)/_layout/dashboard'
                           });
                         }}
                       >
@@ -203,7 +203,7 @@ function DashboardPage() {
                         onClick={() => {
                           navigate({
                             search: (prev) => ({ ...prev, page: pageNum }),
-                            from: '/dashboard'
+                          from: '/(auth)/_layout/dashboard'
                           });
                         }}
                       >
@@ -227,7 +227,7 @@ function DashboardPage() {
                       if (data.meta?.pagination?.hasNextPage) {
                         navigate({
                           search: (prev) => ({ ...prev, page: data.meta?.pagination?.page! + 1 }),
-                          from: '/dashboard'
+                          from: '/(auth)/_layout/dashboard'
                         });
                       }
                     }}

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_auth/logout')({
+export const Route = createFileRoute('/(auth)/_layout/logout')({
   component: RouteComponent,
 })
 
@@ -44,8 +44,8 @@ function RouteComponent() {
           <EmptyDescription>{user?.name.split(' ')[0]}, Do you really want to logout?</EmptyDescription>
         </EmptyHeader>
         <EmptyContent className="flex-row justify-center">
-          <Button variant='destructive' size="sm" onClick={signOUtUser}>Yes</Button>
-          <Button variant='default' size="sm" asChild>
+          <Button variant='destructive' size='sm' onClick={signOUtUser}>Yes</Button>
+          <Button variant='default' size='sm' asChild>
             <Link to='/dashboard'>
               No
             </Link>

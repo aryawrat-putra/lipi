@@ -12,17 +12,19 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as RecoverRouteImport } from './routes/recover'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthTrashRouteImport } from './routes/_auth.trash'
-import { Route as AuthSettingsRouteImport } from './routes/_auth.settings'
-import { Route as AuthNotificationsRouteImport } from './routes/_auth.notifications'
-import { Route as AuthLogoutRouteImport } from './routes/_auth.logout'
-import { Route as AuthFavoritesRouteImport } from './routes/_auth.favorites'
-import { Route as AuthDashboardRouteImport } from './routes/_auth.dashboard'
-import { Route as DocsDocIdIndexRouteImport } from './routes/docs/$docId/index'
-import { Route as DocsDocIdVersionsRouteImport } from './routes/docs/$docId/versions'
-import { Route as DocsDocIdHistoryRouteImport } from './routes/docs/$docId/history'
+import { Route as authLayoutRouteImport } from './routes/(auth)/_layout'
+import { Route as authLayoutTrashRouteImport } from './routes/(auth)/_layout/trash'
+import { Route as authLayoutSettingsRouteImport } from './routes/(auth)/_layout/settings'
+import { Route as authLayoutProjectsRouteImport } from './routes/(auth)/_layout/projects'
+import { Route as authLayoutNotificationsRouteImport } from './routes/(auth)/_layout/notifications'
+import { Route as authLayoutLogoutRouteImport } from './routes/(auth)/_layout/logout'
+import { Route as authLayoutFavoritesRouteImport } from './routes/(auth)/_layout/favorites'
+import { Route as authLayoutDocumentsRouteImport } from './routes/(auth)/_layout/documents'
+import { Route as authLayoutDashboardRouteImport } from './routes/(auth)/_layout/dashboard'
+import { Route as authDocsDocIdIndexRouteImport } from './routes/(auth)/docs/$docId/index'
+import { Route as authDocsDocIdVersionsRouteImport } from './routes/(auth)/docs/$docId/versions'
+import { Route as authDocsDocIdHistoryRouteImport } from './routes/(auth)/docs/$docId/history'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -39,57 +41,67 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/_auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthTrashRoute = AuthTrashRouteImport.update({
+const authLayoutRoute = authLayoutRouteImport.update({
+  id: '/(auth)/_layout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authLayoutTrashRoute = authLayoutTrashRouteImport.update({
   id: '/trash',
   path: '/trash',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => authLayoutRoute,
 } as any)
-const AuthSettingsRoute = AuthSettingsRouteImport.update({
+const authLayoutSettingsRoute = authLayoutSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => authLayoutRoute,
 } as any)
-const AuthNotificationsRoute = AuthNotificationsRouteImport.update({
+const authLayoutProjectsRoute = authLayoutProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => authLayoutRoute,
+} as any)
+const authLayoutNotificationsRoute = authLayoutNotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => authLayoutRoute,
 } as any)
-const AuthLogoutRoute = AuthLogoutRouteImport.update({
+const authLayoutLogoutRoute = authLayoutLogoutRouteImport.update({
   id: '/logout',
   path: '/logout',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => authLayoutRoute,
 } as any)
-const AuthFavoritesRoute = AuthFavoritesRouteImport.update({
+const authLayoutFavoritesRoute = authLayoutFavoritesRouteImport.update({
   id: '/favorites',
   path: '/favorites',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => authLayoutRoute,
 } as any)
-const AuthDashboardRoute = AuthDashboardRouteImport.update({
+const authLayoutDocumentsRoute = authLayoutDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => authLayoutRoute,
+} as any)
+const authLayoutDashboardRoute = authLayoutDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => authLayoutRoute,
 } as any)
-const DocsDocIdIndexRoute = DocsDocIdIndexRouteImport.update({
-  id: '/docs/$docId/',
+const authDocsDocIdIndexRoute = authDocsDocIdIndexRouteImport.update({
+  id: '/(auth)/docs/$docId/',
   path: '/docs/$docId/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DocsDocIdVersionsRoute = DocsDocIdVersionsRouteImport.update({
-  id: '/docs/$docId/versions',
+const authDocsDocIdVersionsRoute = authDocsDocIdVersionsRouteImport.update({
+  id: '/(auth)/docs/$docId/versions',
   path: '/docs/$docId/versions',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DocsDocIdHistoryRoute = DocsDocIdHistoryRouteImport.update({
-  id: '/docs/$docId/history',
+const authDocsDocIdHistoryRoute = authDocsDocIdHistoryRouteImport.update({
+  id: '/(auth)/docs/$docId/history',
   path: '/docs/$docId/history',
   getParentRoute: () => rootRouteImport,
 } as any)
@@ -99,47 +111,53 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/recover': typeof RecoverRoute
   '/signup': typeof SignupRoute
-  '/dashboard': typeof AuthDashboardRoute
-  '/favorites': typeof AuthFavoritesRoute
-  '/logout': typeof AuthLogoutRoute
-  '/notifications': typeof AuthNotificationsRoute
-  '/settings': typeof AuthSettingsRoute
-  '/trash': typeof AuthTrashRoute
-  '/docs/$docId/history': typeof DocsDocIdHistoryRoute
-  '/docs/$docId/versions': typeof DocsDocIdVersionsRoute
-  '/docs/$docId': typeof DocsDocIdIndexRoute
+  '/dashboard': typeof authLayoutDashboardRoute
+  '/documents': typeof authLayoutDocumentsRoute
+  '/favorites': typeof authLayoutFavoritesRoute
+  '/logout': typeof authLayoutLogoutRoute
+  '/notifications': typeof authLayoutNotificationsRoute
+  '/projects': typeof authLayoutProjectsRoute
+  '/settings': typeof authLayoutSettingsRoute
+  '/trash': typeof authLayoutTrashRoute
+  '/docs/$docId/history': typeof authDocsDocIdHistoryRoute
+  '/docs/$docId/versions': typeof authDocsDocIdVersionsRoute
+  '/docs/$docId': typeof authDocsDocIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/recover': typeof RecoverRoute
   '/signup': typeof SignupRoute
-  '/dashboard': typeof AuthDashboardRoute
-  '/favorites': typeof AuthFavoritesRoute
-  '/logout': typeof AuthLogoutRoute
-  '/notifications': typeof AuthNotificationsRoute
-  '/settings': typeof AuthSettingsRoute
-  '/trash': typeof AuthTrashRoute
-  '/docs/$docId/history': typeof DocsDocIdHistoryRoute
-  '/docs/$docId/versions': typeof DocsDocIdVersionsRoute
-  '/docs/$docId': typeof DocsDocIdIndexRoute
+  '/dashboard': typeof authLayoutDashboardRoute
+  '/documents': typeof authLayoutDocumentsRoute
+  '/favorites': typeof authLayoutFavoritesRoute
+  '/logout': typeof authLayoutLogoutRoute
+  '/notifications': typeof authLayoutNotificationsRoute
+  '/projects': typeof authLayoutProjectsRoute
+  '/settings': typeof authLayoutSettingsRoute
+  '/trash': typeof authLayoutTrashRoute
+  '/docs/$docId/history': typeof authDocsDocIdHistoryRoute
+  '/docs/$docId/versions': typeof authDocsDocIdVersionsRoute
+  '/docs/$docId': typeof authDocsDocIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
   '/recover': typeof RecoverRoute
   '/signup': typeof SignupRoute
-  '/_auth/dashboard': typeof AuthDashboardRoute
-  '/_auth/favorites': typeof AuthFavoritesRoute
-  '/_auth/logout': typeof AuthLogoutRoute
-  '/_auth/notifications': typeof AuthNotificationsRoute
-  '/_auth/settings': typeof AuthSettingsRoute
-  '/_auth/trash': typeof AuthTrashRoute
-  '/docs/$docId/history': typeof DocsDocIdHistoryRoute
-  '/docs/$docId/versions': typeof DocsDocIdVersionsRoute
-  '/docs/$docId/': typeof DocsDocIdIndexRoute
+  '/(auth)/_layout': typeof authLayoutRouteWithChildren
+  '/(auth)/_layout/dashboard': typeof authLayoutDashboardRoute
+  '/(auth)/_layout/documents': typeof authLayoutDocumentsRoute
+  '/(auth)/_layout/favorites': typeof authLayoutFavoritesRoute
+  '/(auth)/_layout/logout': typeof authLayoutLogoutRoute
+  '/(auth)/_layout/notifications': typeof authLayoutNotificationsRoute
+  '/(auth)/_layout/projects': typeof authLayoutProjectsRoute
+  '/(auth)/_layout/settings': typeof authLayoutSettingsRoute
+  '/(auth)/_layout/trash': typeof authLayoutTrashRoute
+  '/(auth)/docs/$docId/history': typeof authDocsDocIdHistoryRoute
+  '/(auth)/docs/$docId/versions': typeof authDocsDocIdVersionsRoute
+  '/(auth)/docs/$docId/': typeof authDocsDocIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -149,9 +167,11 @@ export interface FileRouteTypes {
     | '/recover'
     | '/signup'
     | '/dashboard'
+    | '/documents'
     | '/favorites'
     | '/logout'
     | '/notifications'
+    | '/projects'
     | '/settings'
     | '/trash'
     | '/docs/$docId/history'
@@ -164,9 +184,11 @@ export interface FileRouteTypes {
     | '/recover'
     | '/signup'
     | '/dashboard'
+    | '/documents'
     | '/favorites'
     | '/logout'
     | '/notifications'
+    | '/projects'
     | '/settings'
     | '/trash'
     | '/docs/$docId/history'
@@ -175,30 +197,32 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/_auth'
     | '/login'
     | '/recover'
     | '/signup'
-    | '/_auth/dashboard'
-    | '/_auth/favorites'
-    | '/_auth/logout'
-    | '/_auth/notifications'
-    | '/_auth/settings'
-    | '/_auth/trash'
-    | '/docs/$docId/history'
-    | '/docs/$docId/versions'
-    | '/docs/$docId/'
+    | '/(auth)/_layout'
+    | '/(auth)/_layout/dashboard'
+    | '/(auth)/_layout/documents'
+    | '/(auth)/_layout/favorites'
+    | '/(auth)/_layout/logout'
+    | '/(auth)/_layout/notifications'
+    | '/(auth)/_layout/projects'
+    | '/(auth)/_layout/settings'
+    | '/(auth)/_layout/trash'
+    | '/(auth)/docs/$docId/history'
+    | '/(auth)/docs/$docId/versions'
+    | '/(auth)/docs/$docId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthRoute: typeof AuthRouteWithChildren
   LoginRoute: typeof LoginRoute
   RecoverRoute: typeof RecoverRoute
   SignupRoute: typeof SignupRoute
-  DocsDocIdHistoryRoute: typeof DocsDocIdHistoryRoute
-  DocsDocIdVersionsRoute: typeof DocsDocIdVersionsRoute
-  DocsDocIdIndexRoute: typeof DocsDocIdIndexRoute
+  authLayoutRoute: typeof authLayoutRouteWithChildren
+  authDocsDocIdHistoryRoute: typeof authDocsDocIdHistoryRoute
+  authDocsDocIdVersionsRoute: typeof authDocsDocIdVersionsRoute
+  authDocsDocIdIndexRoute: typeof authDocsDocIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -224,13 +248,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth': {
-      id: '/_auth'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -238,101 +255,128 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth/trash': {
-      id: '/_auth/trash'
+    '/(auth)/_layout': {
+      id: '/(auth)/_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof authLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/_layout/trash': {
+      id: '/(auth)/_layout/trash'
       path: '/trash'
       fullPath: '/trash'
-      preLoaderRoute: typeof AuthTrashRouteImport
-      parentRoute: typeof AuthRoute
+      preLoaderRoute: typeof authLayoutTrashRouteImport
+      parentRoute: typeof authLayoutRoute
     }
-    '/_auth/settings': {
-      id: '/_auth/settings'
+    '/(auth)/_layout/settings': {
+      id: '/(auth)/_layout/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof AuthSettingsRouteImport
-      parentRoute: typeof AuthRoute
+      preLoaderRoute: typeof authLayoutSettingsRouteImport
+      parentRoute: typeof authLayoutRoute
     }
-    '/_auth/notifications': {
-      id: '/_auth/notifications'
+    '/(auth)/_layout/projects': {
+      id: '/(auth)/_layout/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof authLayoutProjectsRouteImport
+      parentRoute: typeof authLayoutRoute
+    }
+    '/(auth)/_layout/notifications': {
+      id: '/(auth)/_layout/notifications'
       path: '/notifications'
       fullPath: '/notifications'
-      preLoaderRoute: typeof AuthNotificationsRouteImport
-      parentRoute: typeof AuthRoute
+      preLoaderRoute: typeof authLayoutNotificationsRouteImport
+      parentRoute: typeof authLayoutRoute
     }
-    '/_auth/logout': {
-      id: '/_auth/logout'
+    '/(auth)/_layout/logout': {
+      id: '/(auth)/_layout/logout'
       path: '/logout'
       fullPath: '/logout'
-      preLoaderRoute: typeof AuthLogoutRouteImport
-      parentRoute: typeof AuthRoute
+      preLoaderRoute: typeof authLayoutLogoutRouteImport
+      parentRoute: typeof authLayoutRoute
     }
-    '/_auth/favorites': {
-      id: '/_auth/favorites'
+    '/(auth)/_layout/favorites': {
+      id: '/(auth)/_layout/favorites'
       path: '/favorites'
       fullPath: '/favorites'
-      preLoaderRoute: typeof AuthFavoritesRouteImport
-      parentRoute: typeof AuthRoute
+      preLoaderRoute: typeof authLayoutFavoritesRouteImport
+      parentRoute: typeof authLayoutRoute
     }
-    '/_auth/dashboard': {
-      id: '/_auth/dashboard'
+    '/(auth)/_layout/documents': {
+      id: '/(auth)/_layout/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof authLayoutDocumentsRouteImport
+      parentRoute: typeof authLayoutRoute
+    }
+    '/(auth)/_layout/dashboard': {
+      id: '/(auth)/_layout/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthDashboardRouteImport
-      parentRoute: typeof AuthRoute
+      preLoaderRoute: typeof authLayoutDashboardRouteImport
+      parentRoute: typeof authLayoutRoute
     }
-    '/docs/$docId/': {
-      id: '/docs/$docId/'
+    '/(auth)/docs/$docId/': {
+      id: '/(auth)/docs/$docId/'
       path: '/docs/$docId'
       fullPath: '/docs/$docId'
-      preLoaderRoute: typeof DocsDocIdIndexRouteImport
+      preLoaderRoute: typeof authDocsDocIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/docs/$docId/versions': {
-      id: '/docs/$docId/versions'
+    '/(auth)/docs/$docId/versions': {
+      id: '/(auth)/docs/$docId/versions'
       path: '/docs/$docId/versions'
       fullPath: '/docs/$docId/versions'
-      preLoaderRoute: typeof DocsDocIdVersionsRouteImport
+      preLoaderRoute: typeof authDocsDocIdVersionsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/docs/$docId/history': {
-      id: '/docs/$docId/history'
+    '/(auth)/docs/$docId/history': {
+      id: '/(auth)/docs/$docId/history'
       path: '/docs/$docId/history'
       fullPath: '/docs/$docId/history'
-      preLoaderRoute: typeof DocsDocIdHistoryRouteImport
+      preLoaderRoute: typeof authDocsDocIdHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface AuthRouteChildren {
-  AuthDashboardRoute: typeof AuthDashboardRoute
-  AuthFavoritesRoute: typeof AuthFavoritesRoute
-  AuthLogoutRoute: typeof AuthLogoutRoute
-  AuthNotificationsRoute: typeof AuthNotificationsRoute
-  AuthSettingsRoute: typeof AuthSettingsRoute
-  AuthTrashRoute: typeof AuthTrashRoute
+interface authLayoutRouteChildren {
+  authLayoutDashboardRoute: typeof authLayoutDashboardRoute
+  authLayoutDocumentsRoute: typeof authLayoutDocumentsRoute
+  authLayoutFavoritesRoute: typeof authLayoutFavoritesRoute
+  authLayoutLogoutRoute: typeof authLayoutLogoutRoute
+  authLayoutNotificationsRoute: typeof authLayoutNotificationsRoute
+  authLayoutProjectsRoute: typeof authLayoutProjectsRoute
+  authLayoutSettingsRoute: typeof authLayoutSettingsRoute
+  authLayoutTrashRoute: typeof authLayoutTrashRoute
 }
 
-const AuthRouteChildren: AuthRouteChildren = {
-  AuthDashboardRoute: AuthDashboardRoute,
-  AuthFavoritesRoute: AuthFavoritesRoute,
-  AuthLogoutRoute: AuthLogoutRoute,
-  AuthNotificationsRoute: AuthNotificationsRoute,
-  AuthSettingsRoute: AuthSettingsRoute,
-  AuthTrashRoute: AuthTrashRoute,
+const authLayoutRouteChildren: authLayoutRouteChildren = {
+  authLayoutDashboardRoute: authLayoutDashboardRoute,
+  authLayoutDocumentsRoute: authLayoutDocumentsRoute,
+  authLayoutFavoritesRoute: authLayoutFavoritesRoute,
+  authLayoutLogoutRoute: authLayoutLogoutRoute,
+  authLayoutNotificationsRoute: authLayoutNotificationsRoute,
+  authLayoutProjectsRoute: authLayoutProjectsRoute,
+  authLayoutSettingsRoute: authLayoutSettingsRoute,
+  authLayoutTrashRoute: authLayoutTrashRoute,
 }
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+const authLayoutRouteWithChildren = authLayoutRoute._addFileChildren(
+  authLayoutRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthRoute: AuthRouteWithChildren,
   LoginRoute: LoginRoute,
   RecoverRoute: RecoverRoute,
   SignupRoute: SignupRoute,
-  DocsDocIdHistoryRoute: DocsDocIdHistoryRoute,
-  DocsDocIdVersionsRoute: DocsDocIdVersionsRoute,
-  DocsDocIdIndexRoute: DocsDocIdIndexRoute,
+  authLayoutRoute: authLayoutRouteWithChildren,
+  authDocsDocIdHistoryRoute: authDocsDocIdHistoryRoute,
+  authDocsDocIdVersionsRoute: authDocsDocIdVersionsRoute,
+  authDocsDocIdIndexRoute: authDocsDocIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

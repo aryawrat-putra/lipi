@@ -10,13 +10,13 @@ import { AppSidebar } from '@/components/interactive/app-sidebar'
 import NotFoundPage from '@/components/pages/not-found'
 import ErrorPage from '@/components/pages/error'
 
-export const Route = createFileRoute("/_auth")({
-    component: AuthLayout,
+export const Route = createFileRoute('/(auth)/_layout')({
+    component: DashboardLayout,
     notFoundComponent: () => <NotFoundPage />,
     errorComponent: ({ ...props }) => <ErrorPage {...props} />,
 })
 
-function AuthLayout() {
+function DashboardLayout() {
     return (
         <section className="container mx-auto">
             <SidebarProvider>

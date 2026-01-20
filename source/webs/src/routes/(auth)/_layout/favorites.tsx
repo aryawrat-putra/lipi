@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { DocumentT } from '@/helpers/types';
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -7,7 +6,7 @@ import { CalendarDays, FileClock, FilePlus, ShieldUser, SlidersHorizontal } from
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import DocumentCard from '@/components/cards/document-card';
 
-export const Route = createFileRoute('/_auth/favorites')({
+export const Route = createFileRoute('/(auth)/_layout/favorites')({
     component: RouteComponent,
 })
 
@@ -27,7 +26,7 @@ function RouteComponent() {
                         <div className="flex items-center gap-2 md:gap-4 max-sm:w-full max-sm:justify-between">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button variant="secondary" size='icon'><ShieldUser /></Button>
+                                    <Button variant="secondary" size="icon"><ShieldUser /></Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56" align="end">
                                     <DropdownMenuLabel>Owned By</DropdownMenuLabel>
@@ -57,7 +56,7 @@ function RouteComponent() {
                             </DropdownMenu>
 
                             {/* TODO : card to open here with filters like last 7,10,30 days OR between x to y date */}
-                            <Button variant='outline' size='default'><CalendarDays /> <span className="max-md:hidden">Filter By Date</span></Button>
+                            <Button variant='outline' size='default'><CalendarDays /> <span className='max-md:hidden'>Filter By Date</span></Button>
                             <Button><FilePlus />New Document</Button>
                         </div>
                     </div>
@@ -92,7 +91,7 @@ function RouteComponent() {
 }
 
 
-const FavDocuments: DocumentT[] = [
+const FavDocuments = [
     {
         "id": "doc_1a2b3c4d5e",
         "last_mod": "2025-11-15T10:30:00.000Z",
