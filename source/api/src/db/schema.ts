@@ -83,6 +83,7 @@ export const project = pgTable('project', {
   ownerId: text('owner_id').notNull().references(() => user.id, { onDelete: "cascade" }),
   name: text('name').notNull(),
   description: text('description'),
+  documents: text('documents_id').array().default([]),
   slug: text('slug').unique(),
   isPublic: boolean('is_public').default(false).notNull(),
   isArchived: boolean('is_archived').notNull().default(false),

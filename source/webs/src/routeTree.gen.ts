@@ -16,15 +16,16 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as authLayoutRouteImport } from './routes/(auth)/_layout'
 import { Route as authLayoutTrashRouteImport } from './routes/(auth)/_layout/trash'
 import { Route as authLayoutSettingsRouteImport } from './routes/(auth)/_layout/settings'
-import { Route as authLayoutProjectsRouteImport } from './routes/(auth)/_layout/projects'
 import { Route as authLayoutNotificationsRouteImport } from './routes/(auth)/_layout/notifications'
 import { Route as authLayoutLogoutRouteImport } from './routes/(auth)/_layout/logout'
 import { Route as authLayoutFavoritesRouteImport } from './routes/(auth)/_layout/favorites'
-import { Route as authLayoutDocumentsRouteImport } from './routes/(auth)/_layout/documents'
 import { Route as authLayoutDashboardRouteImport } from './routes/(auth)/_layout/dashboard'
-import { Route as authDocsDocIdIndexRouteImport } from './routes/(auth)/docs/$docId/index'
-import { Route as authDocsDocIdVersionsRouteImport } from './routes/(auth)/docs/$docId/versions'
-import { Route as authDocsDocIdHistoryRouteImport } from './routes/(auth)/docs/$docId/history'
+import { Route as authLayoutProjectsIndexRouteImport } from './routes/(auth)/_layout/projects/index'
+import { Route as authLayoutDocumentsIndexRouteImport } from './routes/(auth)/_layout/documents/index'
+import { Route as authLayoutProjectsProjectIdRouteImport } from './routes/(auth)/_layout/projects/$projectId'
+import { Route as authLayoutDocumentsDocIdIndexRouteImport } from './routes/(auth)/_layout/documents/$docId/index'
+import { Route as authLayoutDocumentsDocIdVersionsRouteImport } from './routes/(auth)/_layout/documents/$docId/versions'
+import { Route as authLayoutDocumentsDocIdHistoryRouteImport } from './routes/(auth)/_layout/documents/$docId/history'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -60,11 +61,6 @@ const authLayoutSettingsRoute = authLayoutSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => authLayoutRoute,
 } as any)
-const authLayoutProjectsRoute = authLayoutProjectsRouteImport.update({
-  id: '/projects',
-  path: '/projects',
-  getParentRoute: () => authLayoutRoute,
-} as any)
 const authLayoutNotificationsRoute = authLayoutNotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
@@ -80,31 +76,46 @@ const authLayoutFavoritesRoute = authLayoutFavoritesRouteImport.update({
   path: '/favorites',
   getParentRoute: () => authLayoutRoute,
 } as any)
-const authLayoutDocumentsRoute = authLayoutDocumentsRouteImport.update({
-  id: '/documents',
-  path: '/documents',
-  getParentRoute: () => authLayoutRoute,
-} as any)
 const authLayoutDashboardRoute = authLayoutDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => authLayoutRoute,
 } as any)
-const authDocsDocIdIndexRoute = authDocsDocIdIndexRouteImport.update({
-  id: '/(auth)/docs/$docId/',
-  path: '/docs/$docId/',
-  getParentRoute: () => rootRouteImport,
+const authLayoutProjectsIndexRoute = authLayoutProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => authLayoutRoute,
 } as any)
-const authDocsDocIdVersionsRoute = authDocsDocIdVersionsRouteImport.update({
-  id: '/(auth)/docs/$docId/versions',
-  path: '/docs/$docId/versions',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const authDocsDocIdHistoryRoute = authDocsDocIdHistoryRouteImport.update({
-  id: '/(auth)/docs/$docId/history',
-  path: '/docs/$docId/history',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const authLayoutDocumentsIndexRoute =
+  authLayoutDocumentsIndexRouteImport.update({
+    id: '/documents/',
+    path: '/documents/',
+    getParentRoute: () => authLayoutRoute,
+  } as any)
+const authLayoutProjectsProjectIdRoute =
+  authLayoutProjectsProjectIdRouteImport.update({
+    id: '/projects/$projectId',
+    path: '/projects/$projectId',
+    getParentRoute: () => authLayoutRoute,
+  } as any)
+const authLayoutDocumentsDocIdIndexRoute =
+  authLayoutDocumentsDocIdIndexRouteImport.update({
+    id: '/documents/$docId/',
+    path: '/documents/$docId/',
+    getParentRoute: () => authLayoutRoute,
+  } as any)
+const authLayoutDocumentsDocIdVersionsRoute =
+  authLayoutDocumentsDocIdVersionsRouteImport.update({
+    id: '/documents/$docId/versions',
+    path: '/documents/$docId/versions',
+    getParentRoute: () => authLayoutRoute,
+  } as any)
+const authLayoutDocumentsDocIdHistoryRoute =
+  authLayoutDocumentsDocIdHistoryRouteImport.update({
+    id: '/documents/$docId/history',
+    path: '/documents/$docId/history',
+    getParentRoute: () => authLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -112,16 +123,17 @@ export interface FileRoutesByFullPath {
   '/recover': typeof RecoverRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof authLayoutDashboardRoute
-  '/documents': typeof authLayoutDocumentsRoute
   '/favorites': typeof authLayoutFavoritesRoute
   '/logout': typeof authLayoutLogoutRoute
   '/notifications': typeof authLayoutNotificationsRoute
-  '/projects': typeof authLayoutProjectsRoute
   '/settings': typeof authLayoutSettingsRoute
   '/trash': typeof authLayoutTrashRoute
-  '/docs/$docId/history': typeof authDocsDocIdHistoryRoute
-  '/docs/$docId/versions': typeof authDocsDocIdVersionsRoute
-  '/docs/$docId': typeof authDocsDocIdIndexRoute
+  '/projects/$projectId': typeof authLayoutProjectsProjectIdRoute
+  '/documents': typeof authLayoutDocumentsIndexRoute
+  '/projects': typeof authLayoutProjectsIndexRoute
+  '/documents/$docId/history': typeof authLayoutDocumentsDocIdHistoryRoute
+  '/documents/$docId/versions': typeof authLayoutDocumentsDocIdVersionsRoute
+  '/documents/$docId': typeof authLayoutDocumentsDocIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -129,16 +141,17 @@ export interface FileRoutesByTo {
   '/recover': typeof RecoverRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof authLayoutDashboardRoute
-  '/documents': typeof authLayoutDocumentsRoute
   '/favorites': typeof authLayoutFavoritesRoute
   '/logout': typeof authLayoutLogoutRoute
   '/notifications': typeof authLayoutNotificationsRoute
-  '/projects': typeof authLayoutProjectsRoute
   '/settings': typeof authLayoutSettingsRoute
   '/trash': typeof authLayoutTrashRoute
-  '/docs/$docId/history': typeof authDocsDocIdHistoryRoute
-  '/docs/$docId/versions': typeof authDocsDocIdVersionsRoute
-  '/docs/$docId': typeof authDocsDocIdIndexRoute
+  '/projects/$projectId': typeof authLayoutProjectsProjectIdRoute
+  '/documents': typeof authLayoutDocumentsIndexRoute
+  '/projects': typeof authLayoutProjectsIndexRoute
+  '/documents/$docId/history': typeof authLayoutDocumentsDocIdHistoryRoute
+  '/documents/$docId/versions': typeof authLayoutDocumentsDocIdVersionsRoute
+  '/documents/$docId': typeof authLayoutDocumentsDocIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -148,16 +161,17 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/(auth)/_layout': typeof authLayoutRouteWithChildren
   '/(auth)/_layout/dashboard': typeof authLayoutDashboardRoute
-  '/(auth)/_layout/documents': typeof authLayoutDocumentsRoute
   '/(auth)/_layout/favorites': typeof authLayoutFavoritesRoute
   '/(auth)/_layout/logout': typeof authLayoutLogoutRoute
   '/(auth)/_layout/notifications': typeof authLayoutNotificationsRoute
-  '/(auth)/_layout/projects': typeof authLayoutProjectsRoute
   '/(auth)/_layout/settings': typeof authLayoutSettingsRoute
   '/(auth)/_layout/trash': typeof authLayoutTrashRoute
-  '/(auth)/docs/$docId/history': typeof authDocsDocIdHistoryRoute
-  '/(auth)/docs/$docId/versions': typeof authDocsDocIdVersionsRoute
-  '/(auth)/docs/$docId/': typeof authDocsDocIdIndexRoute
+  '/(auth)/_layout/projects/$projectId': typeof authLayoutProjectsProjectIdRoute
+  '/(auth)/_layout/documents/': typeof authLayoutDocumentsIndexRoute
+  '/(auth)/_layout/projects/': typeof authLayoutProjectsIndexRoute
+  '/(auth)/_layout/documents/$docId/history': typeof authLayoutDocumentsDocIdHistoryRoute
+  '/(auth)/_layout/documents/$docId/versions': typeof authLayoutDocumentsDocIdVersionsRoute
+  '/(auth)/_layout/documents/$docId/': typeof authLayoutDocumentsDocIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -167,16 +181,17 @@ export interface FileRouteTypes {
     | '/recover'
     | '/signup'
     | '/dashboard'
-    | '/documents'
     | '/favorites'
     | '/logout'
     | '/notifications'
-    | '/projects'
     | '/settings'
     | '/trash'
-    | '/docs/$docId/history'
-    | '/docs/$docId/versions'
-    | '/docs/$docId'
+    | '/projects/$projectId'
+    | '/documents'
+    | '/projects'
+    | '/documents/$docId/history'
+    | '/documents/$docId/versions'
+    | '/documents/$docId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -184,16 +199,17 @@ export interface FileRouteTypes {
     | '/recover'
     | '/signup'
     | '/dashboard'
-    | '/documents'
     | '/favorites'
     | '/logout'
     | '/notifications'
-    | '/projects'
     | '/settings'
     | '/trash'
-    | '/docs/$docId/history'
-    | '/docs/$docId/versions'
-    | '/docs/$docId'
+    | '/projects/$projectId'
+    | '/documents'
+    | '/projects'
+    | '/documents/$docId/history'
+    | '/documents/$docId/versions'
+    | '/documents/$docId'
   id:
     | '__root__'
     | '/'
@@ -202,16 +218,17 @@ export interface FileRouteTypes {
     | '/signup'
     | '/(auth)/_layout'
     | '/(auth)/_layout/dashboard'
-    | '/(auth)/_layout/documents'
     | '/(auth)/_layout/favorites'
     | '/(auth)/_layout/logout'
     | '/(auth)/_layout/notifications'
-    | '/(auth)/_layout/projects'
     | '/(auth)/_layout/settings'
     | '/(auth)/_layout/trash'
-    | '/(auth)/docs/$docId/history'
-    | '/(auth)/docs/$docId/versions'
-    | '/(auth)/docs/$docId/'
+    | '/(auth)/_layout/projects/$projectId'
+    | '/(auth)/_layout/documents/'
+    | '/(auth)/_layout/projects/'
+    | '/(auth)/_layout/documents/$docId/history'
+    | '/(auth)/_layout/documents/$docId/versions'
+    | '/(auth)/_layout/documents/$docId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -220,9 +237,6 @@ export interface RootRouteChildren {
   RecoverRoute: typeof RecoverRoute
   SignupRoute: typeof SignupRoute
   authLayoutRoute: typeof authLayoutRouteWithChildren
-  authDocsDocIdHistoryRoute: typeof authDocsDocIdHistoryRoute
-  authDocsDocIdVersionsRoute: typeof authDocsDocIdVersionsRoute
-  authDocsDocIdIndexRoute: typeof authDocsDocIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -276,13 +290,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLayoutSettingsRouteImport
       parentRoute: typeof authLayoutRoute
     }
-    '/(auth)/_layout/projects': {
-      id: '/(auth)/_layout/projects'
-      path: '/projects'
-      fullPath: '/projects'
-      preLoaderRoute: typeof authLayoutProjectsRouteImport
-      parentRoute: typeof authLayoutRoute
-    }
     '/(auth)/_layout/notifications': {
       id: '/(auth)/_layout/notifications'
       path: '/notifications'
@@ -304,13 +311,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLayoutFavoritesRouteImport
       parentRoute: typeof authLayoutRoute
     }
-    '/(auth)/_layout/documents': {
-      id: '/(auth)/_layout/documents'
-      path: '/documents'
-      fullPath: '/documents'
-      preLoaderRoute: typeof authLayoutDocumentsRouteImport
-      parentRoute: typeof authLayoutRoute
-    }
     '/(auth)/_layout/dashboard': {
       id: '/(auth)/_layout/dashboard'
       path: '/dashboard'
@@ -318,50 +318,79 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLayoutDashboardRouteImport
       parentRoute: typeof authLayoutRoute
     }
-    '/(auth)/docs/$docId/': {
-      id: '/(auth)/docs/$docId/'
-      path: '/docs/$docId'
-      fullPath: '/docs/$docId'
-      preLoaderRoute: typeof authDocsDocIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
+    '/(auth)/_layout/projects/': {
+      id: '/(auth)/_layout/projects/'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof authLayoutProjectsIndexRouteImport
+      parentRoute: typeof authLayoutRoute
     }
-    '/(auth)/docs/$docId/versions': {
-      id: '/(auth)/docs/$docId/versions'
-      path: '/docs/$docId/versions'
-      fullPath: '/docs/$docId/versions'
-      preLoaderRoute: typeof authDocsDocIdVersionsRouteImport
-      parentRoute: typeof rootRouteImport
+    '/(auth)/_layout/documents/': {
+      id: '/(auth)/_layout/documents/'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof authLayoutDocumentsIndexRouteImport
+      parentRoute: typeof authLayoutRoute
     }
-    '/(auth)/docs/$docId/history': {
-      id: '/(auth)/docs/$docId/history'
-      path: '/docs/$docId/history'
-      fullPath: '/docs/$docId/history'
-      preLoaderRoute: typeof authDocsDocIdHistoryRouteImport
-      parentRoute: typeof rootRouteImport
+    '/(auth)/_layout/projects/$projectId': {
+      id: '/(auth)/_layout/projects/$projectId'
+      path: '/projects/$projectId'
+      fullPath: '/projects/$projectId'
+      preLoaderRoute: typeof authLayoutProjectsProjectIdRouteImport
+      parentRoute: typeof authLayoutRoute
+    }
+    '/(auth)/_layout/documents/$docId/': {
+      id: '/(auth)/_layout/documents/$docId/'
+      path: '/documents/$docId'
+      fullPath: '/documents/$docId'
+      preLoaderRoute: typeof authLayoutDocumentsDocIdIndexRouteImport
+      parentRoute: typeof authLayoutRoute
+    }
+    '/(auth)/_layout/documents/$docId/versions': {
+      id: '/(auth)/_layout/documents/$docId/versions'
+      path: '/documents/$docId/versions'
+      fullPath: '/documents/$docId/versions'
+      preLoaderRoute: typeof authLayoutDocumentsDocIdVersionsRouteImport
+      parentRoute: typeof authLayoutRoute
+    }
+    '/(auth)/_layout/documents/$docId/history': {
+      id: '/(auth)/_layout/documents/$docId/history'
+      path: '/documents/$docId/history'
+      fullPath: '/documents/$docId/history'
+      preLoaderRoute: typeof authLayoutDocumentsDocIdHistoryRouteImport
+      parentRoute: typeof authLayoutRoute
     }
   }
 }
 
 interface authLayoutRouteChildren {
   authLayoutDashboardRoute: typeof authLayoutDashboardRoute
-  authLayoutDocumentsRoute: typeof authLayoutDocumentsRoute
   authLayoutFavoritesRoute: typeof authLayoutFavoritesRoute
   authLayoutLogoutRoute: typeof authLayoutLogoutRoute
   authLayoutNotificationsRoute: typeof authLayoutNotificationsRoute
-  authLayoutProjectsRoute: typeof authLayoutProjectsRoute
   authLayoutSettingsRoute: typeof authLayoutSettingsRoute
   authLayoutTrashRoute: typeof authLayoutTrashRoute
+  authLayoutProjectsProjectIdRoute: typeof authLayoutProjectsProjectIdRoute
+  authLayoutDocumentsIndexRoute: typeof authLayoutDocumentsIndexRoute
+  authLayoutProjectsIndexRoute: typeof authLayoutProjectsIndexRoute
+  authLayoutDocumentsDocIdHistoryRoute: typeof authLayoutDocumentsDocIdHistoryRoute
+  authLayoutDocumentsDocIdVersionsRoute: typeof authLayoutDocumentsDocIdVersionsRoute
+  authLayoutDocumentsDocIdIndexRoute: typeof authLayoutDocumentsDocIdIndexRoute
 }
 
 const authLayoutRouteChildren: authLayoutRouteChildren = {
   authLayoutDashboardRoute: authLayoutDashboardRoute,
-  authLayoutDocumentsRoute: authLayoutDocumentsRoute,
   authLayoutFavoritesRoute: authLayoutFavoritesRoute,
   authLayoutLogoutRoute: authLayoutLogoutRoute,
   authLayoutNotificationsRoute: authLayoutNotificationsRoute,
-  authLayoutProjectsRoute: authLayoutProjectsRoute,
   authLayoutSettingsRoute: authLayoutSettingsRoute,
   authLayoutTrashRoute: authLayoutTrashRoute,
+  authLayoutProjectsProjectIdRoute: authLayoutProjectsProjectIdRoute,
+  authLayoutDocumentsIndexRoute: authLayoutDocumentsIndexRoute,
+  authLayoutProjectsIndexRoute: authLayoutProjectsIndexRoute,
+  authLayoutDocumentsDocIdHistoryRoute: authLayoutDocumentsDocIdHistoryRoute,
+  authLayoutDocumentsDocIdVersionsRoute: authLayoutDocumentsDocIdVersionsRoute,
+  authLayoutDocumentsDocIdIndexRoute: authLayoutDocumentsDocIdIndexRoute,
 }
 
 const authLayoutRouteWithChildren = authLayoutRoute._addFileChildren(
@@ -374,9 +403,6 @@ const rootRouteChildren: RootRouteChildren = {
   RecoverRoute: RecoverRoute,
   SignupRoute: SignupRoute,
   authLayoutRoute: authLayoutRouteWithChildren,
-  authDocsDocIdHistoryRoute: authDocsDocIdHistoryRoute,
-  authDocsDocIdVersionsRoute: authDocsDocIdVersionsRoute,
-  authDocsDocIdIndexRoute: authDocsDocIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

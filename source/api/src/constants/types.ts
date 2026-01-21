@@ -27,3 +27,16 @@ export const documentPaginationAndFilters = z.object({
     sortBy: z.enum(["title", "createdAt", "updatedAt"]).optional().default("createdAt"),
     sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
 });
+
+export const projectPaginationAndFilters = z.object({
+    page: z.number().optional().default(1).transform((v) => Math.max(1, Number(v) || 1)),
+    limit: z.number().optional().default(10).transform((v) => Math.min(100, Math.max(1, Number(v) || 10))),
+    search: z.string().optional(),
+    sortBy: z.enum(["name", "createdAt", "updatedAt"]).optional().default("createdAt"),
+    sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
+});
+
+export const createProjectSchema = z.object({
+    name: z.string().min(3).max(256),
+    description: z.string().max(512).default(''),
+})

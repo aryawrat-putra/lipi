@@ -1,6 +1,6 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/(auth)/docs/$docId/versions')({
+export const Route = createFileRoute('/(auth)/_layout/documents/$docId/versions')({
     component: RouteComponent,
 })
 

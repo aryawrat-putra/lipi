@@ -1,68 +1,50 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { FileClock, FileHeart, FilePen, GripVertical, SquareArrowOutUpRight, Trash2 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+
+import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
+import { FileHeart, FilePen, FilePenLine, GalleryHorizontalEnd, GripVertical, SquareArrowOutUpRight, Trash2 } from 'lucide-react'
+
 import { document } from '../../../../api/src/db/schema';
+import { formatDistanceToNowStrict } from 'date-fns'
 
-
-export default function DocumentCard({ id, title }: typeof document.$inferSelect) {
-
+export default function DocumentCard({ id, title, updatedAt, allVersionsIds }: typeof document.$inferSelect) {
     return (
         <ContextMenu>
             <ContextMenuTrigger>
-                <Link to={`/docs/${id}`}>
-                    <Card className='md:aspect-video hover:border hover:border-primary justify-between'>
+                <Link to="/documents/$docId" params={{ docId: id! }}>
+                    <Card className='justify-between border border-border/50 transition-all duration-300 cursor-pointer hover:border-border hover:shadow-md' title={title}>
                         <CardHeader>
-                            <CardTitle className='leading-6'>{title}</CardTitle>
-                            {/* TOOD show when added in favorite */}
-                            {/* <CardAction> <Heart className='fill-primary text-primary' /> </CardAction> */}
+                            <CardTitle className='text-pretty truncate'>{title}</CardTitle>
+                            <CardDescription>
+
+                            </CardDescription>
+                            <CardAction>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} className='cursor-pointer' asChild>
+                                        <Button size='icon' variant='outline' className='text-muted-foreground'><GripVertical /></Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align='end'>
+                                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}><FilePen /> Rename</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={(e) => e.stopPropagation()} className='text-primary'><FileHeart className='text-primary' /> Favorite</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={(e) => e.stopPropagation()} asChild>
+                                            <Link to={`/docs/$docId`} params={{ docId: id! }} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={(e) => e.stopPropagation()} className='text-destructive'><Trash2 className='text-destructive' /> Delete</DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </CardAction>
                         </CardHeader>
-
-                        <CardContent>
-                            {/* User who modified last */}
-                            <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
-                                <Avatar className='size-6'>
-                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                    <AvatarFallback>CN</AvatarFallback>
-                                </Avatar>
-                                <Avatar className='size-6'>
-                                    <AvatarImage
-                                        src="https://github.com/maxleiter.png"
-                                        alt="@maxleiter"
-                                    />
-                                    <AvatarFallback>LR</AvatarFallback>
-                                </Avatar>
-                                <Avatar className='size-6'>
-                                    <AvatarImage
-                                        src="https://github.com/evilrabbit.png"
-                                        alt="@evilrabbit"
-                                    />
-                                    <AvatarFallback>ER</AvatarFallback>
-                                </Avatar>
-                            </div>
-                        </CardContent>
-
-                        <CardFooter className='justify-between items-center gap-2'>
-                            <Badge variant='outline'><FileClock /> 22h ago</Badge>
-
-                            <DropdownMenu>
-                                <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} className='cursor-pointer' asChild>
-                                    <Button size='icon' variant='outline' className='text-muted-foreground'><GripVertical /></Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align='end'>
-                                    <DropdownMenuItem onClick={(e) => e.stopPropagation()}><FilePen /> Rename</DropdownMenuItem>
-                                    <DropdownMenuItem onClick={(e) => e.stopPropagation()}><Trash2 /> Delete</DropdownMenuItem>
-                                    <DropdownMenuItem onClick={(e) => e.stopPropagation()}><FileHeart /> Favorite</DropdownMenuItem>
-                                    <DropdownMenuItem onClick={(e) => e.stopPropagation()} asChild>
-                                        <Link to={`/docs/${id}`} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-
+                        <CardFooter className="flex flex-nowrap justify-between items-center">
+                            <p className="flex flex-nowrap justify-between items-center gap-2">
+                                <GalleryHorizontalEnd className="size-4" />
+                                {allVersionsIds?.length}
+                            </p>
+                            <p className="flex flex-nowrap justify-between items-center gap-2">
+                                <FilePenLine className="size-4" />
+                                {formatDistanceToNowStrict(new Date(updatedAt), { addSuffix: true })}
+                            </p>
                         </CardFooter>
                     </Card>
                 </Link>
@@ -71,9 +53,9 @@ export default function DocumentCard({ id, title }: typeof document.$inferSelect
 
             <ContextMenuContent>
                 <ContextMenuItem><FilePen /> Rename</ContextMenuItem>
-                <ContextMenuItem><Trash2 /> Delete</ContextMenuItem>
-                <ContextMenuItem><FileHeart /> Favorite</ContextMenuItem>
-                <ContextMenuItem asChild><Link to={`/docs/${id}`} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link></ContextMenuItem>
+                <ContextMenuItem className='text-primary'><FileHeart className='text-primary' /> Favorite</ContextMenuItem>
+                <ContextMenuItem asChild><Link to={`/docs/$docId`} params={{ docId: id! }} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link></ContextMenuItem>
+                <ContextMenuItem className='text-destructive'><Trash2 className='text-destructive' /> Delete</ContextMenuItem>
             </ContextMenuContent>
         </ContextMenu>
     )

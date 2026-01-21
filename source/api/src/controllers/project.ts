@@ -1,116 +1,173 @@
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';
 import { HTTPException } from 'hono/http-exception';
-import {db} from "@/db";
+import { and, or, ilike, asc, desc, sql, eq } from "drizzle-orm";
+
+import { db } from "@/db";
+import { project } from '@/db/schema';
+
+import { generalApiResponse } from '@/lib/utils';
+import { createProjectSchema, projectPaginationAndFilters } from '@/constants/types';
 
 export const projectController = new Hono()
+    // ? Create Project
+    .post(
+        '/',
+        validator('json', (value, c) => {
+            const result = createProjectSchema.safeParse(value);
 
-// // ? Create a new category
-// .post(
-//     '/',
-//     validator('json', (value, c) => {
-//         const result = createCategorySchema.safeParse(value);
-//         if (!result.success) {
-//             return c.json(genApiResponse('Invalid request body', `-- ${result.error.issues[0].path[0]} -- ${result.error.issues[0].message}`), 400);
-//         }
-//         return result.data;
-//     }),
-//     async (c) => {
-//         try {
-//             const body = c.req.valid('json');
+            if (!result.success) {
+                const issue = result.error.issues[0];
 
-//             // * Check if category with same name already exists
-//             const existingCategory = await CategoryModel.findOne({
-//                 name: { $regex: `^${body.name}$`, $options: 'i' }
-//             });
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: `Invalid  format '${String(issue.path[0])}': ${issue.message}`,
+                        statusCode: 400,
+                        errors: result.error.flatten().fieldErrors,
+                    }),
+                    400
+                );
+            }
 
-//             if (existingCategory) {
-//                 return c.json(genApiResponse('Category with this name already exists'), 409);
-//             }
+            return result.data;
+        }),
+        async (c) => {
+            try {
+                let creatorId = c.get('session').user.id;
+                const data = c.req.valid('json');
 
-//             const newCategory = new CategoryModel(body);
-//             const savedCategory = await newCategory.save();
+                const p: typeof project.$inferInsert = {
+                    name: data.name,
+                    description: data.description,
+                    ownerId: creatorId,
+                }
 
-//             return c.json(genApiResponse('Category created successfully', savedCategory, true), 201);
-//         } catch (error: any) {
-//             if (error instanceof HTTPException) {
-//                 throw error;
-//             }
+                let createdProject = await db.insert(project).values(p).returning();
 
-//             console.error('Error creating category:', error);
+                return c.json(
+                    generalApiResponse({
+                        success: true,
+                        message: "Project created successfully",
+                        data: createdProject,
+                        statusCode: 201,
+                    }),
+                    201
+                );
+            } catch (error: any) {
+                if (error instanceof HTTPException) {
+                    throw error;
+                }
 
-//             // * Handle MongoDB validation errors
-//             if (error.name === 'ValidationError') {
-//                 return c.json(genApiResponse('Validation failed', error.errors), 400);
-//             }
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: "Failed to create project!",
+                        statusCode: 500,
+                        errors: error
+                    }),
+                    500
+                );
+            }
+        }
+    )
 
-//             return c.json(genApiResponse('Failed to create category'), 500);
-//         }
-//     }
-// )
+    // ? Get all projects with pagination, search, and sorting
+    .get(
+        "/",
+        validator("query", (value, c) => {
+            const result = projectPaginationAndFilters.safeParse({
+                ...value,
+                limit: Number(value.limit),
+                page: Number(value.page)
+            });
 
-// // ? Get all categories with pagination, search, and sorting
-// .get(
-//     '/',
-//     validator('query', (value, c) => {
-//         const result = getCategoriesQuerySchema.safeParse(value);
-//         if (!result.success) {
-//             return c.json(genApiResponse('Invalid query parameters', `-- ${result.error.issues[0].path[0]} -- ${result.error.issues[0].message}`), 400);
-//         }
-//         return result.data;
-//     }),
-//     async (c) => {
-//         try {
-//             const { page, limit, search, sortBy, sortOrder } = c.req.valid('query');
+            if (!result.success) {
+                const issue = result.error.issues[0];
 
-//             // * Build query
-//             const query: any = {};
-//             if (search) {
-//                 query.$or = [
-//                     { name: { $regex: search, $options: 'i' } },
-//                     { description: { $regex: search, $options: 'i' } },
-//                 ];
-//             }
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: `Invalid  format'${String(issue.path[0])}': ${issue.message}`,
+                        statusCode: 400,
+                        errors: result.error.flatten().fieldErrors,
+                    }),
+                    400
+                );
+            }
 
-//             // * Calculate pagination
-//             const skip = (page - 1) * limit;
+            return result.data;
+        }),
+        async (c) => {
+            try {
+                let creatorId = c.get('session').user.id;
+                const { page, limit, search, sortBy, sortOrder } = c.req.valid("query");
 
-//             // * Build sort object
-//             const sort: any = {};
-//             sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
+                const offset = (page - 1) * limit;
 
-//             // * Execute queries
-//             const [categories, totalCount] = await Promise.all([
-//                 CategoryModel
-//                     .find(query)
-//                     .sort(sort)
-//                     .skip(skip)
-//                     .limit(limit)
-//                     .lean(),
-//                 CategoryModel.countDocuments(query),
-//             ]);
+                /* ---------------- WHERE ---------------- */
+                const whereClause = and(
+                    eq(project.ownerId, creatorId),
+                    eq(project.isArchived, false),
+                    search ? ilike(project.name, `%${search}%`) : undefined,
+                    search ? ilike(project.description, `%${search}%`) : undefined
+                );
 
-//             const totalPages = Math.ceil(totalCount / limit);
-//             const hasNextPage = page < totalPages;
-//             const hasPrevPage = page > 1;
+                /* ---------------- ORDER ---------------- */
+                const orderBy = sortOrder === "asc" ? asc(project[sortBy]) : desc(project[sortBy]);
 
-//             return c.json(genApiResponse('Done', {
-//                 categories,
-//                 pagination: {
-//                     currentPage: page,
-//                     totalPages,
-//                     totalCount,
-//                     hasNextPage,
-//                     hasPrevPage,
-//                     limit,
-//                 },
-//             }, true), 200);
-//         } catch (error) {
-//             console.error('Error fetching categories:', error);
-//             return c.json(genApiResponse('Failed to fetch categories'), 500);
-//         }
-//     }
-// )
+                /* ---------------- DATA ---------------- */
+                const projects = await db
+                    .select()
+                    .from(project)
+                    .where(whereClause)
+                    .orderBy(orderBy)
+                    .limit(limit)
+                    .offset(offset);
+
+                /* ---------------- COUNT ---------------- */
+                const [{ count }] = await db
+                    .select({ count: sql<number>`count(*)` })
+                    .from(project)
+                    .where(whereClause);
+
+                const totalPages = Math.ceil(count / limit);
+
+                return c.json(
+                    generalApiResponse({
+                        success: true,
+                        message: "All Projects",
+                        statusCode: 200,
+                        data: projects,
+                        meta: {
+                            pagination: {
+                                page,
+                                total: totalPages,
+                                limit,
+                                count,
+                                hasNextPage: page < totalPages,
+                                hasPrevPage: page > 1,
+                            }
+                        }
+                    }),
+                    200
+                );
+            } catch (error: any) {
+                console.error("Error fetching projects:", error);
+
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: `Failed to get all projects`,
+                        statusCode: 500,
+                        errors: error,
+                    }),
+                    500
+                );
+            }
+        }
+    );
+
 
 // // ? Get category by ID
 // .get(

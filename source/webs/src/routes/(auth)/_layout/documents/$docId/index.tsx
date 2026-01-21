@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useParams } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/(auth)/docs/$docId/')({
+export const Route = createFileRoute('/(auth)/_layout/documents/$docId/')({
   component: RouteComponent,
 })
 
@@ -23,7 +23,7 @@ import { FindAndReplaceCard } from '@/components/doc/card/find-replace-card';
 
 
 function RouteComponent() {
-  let { docId } = useParams({ from: '/(auth)/docs/$docId/' });
+  let { docId } = useParams({ from: '/(auth)/_layout/documents/$docId/' });
   const [isToolbarOpen, setIsToolbarOpen] = useState<boolean>(true);
   const [additionalDialog, setAdditionalDialog] = useState<'none' | 'f-n-r'>('none')
 
