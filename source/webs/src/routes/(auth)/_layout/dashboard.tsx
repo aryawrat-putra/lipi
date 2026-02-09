@@ -25,7 +25,7 @@ function DashboardPage() {
     mutationFn: () => postDoc(),
     onSuccess: ({ data }) => {
       // ? Navigate user to doc link
-      navigate({ to: `/docs/$docId`, params: { docId: data![0].id! } });
+      navigate({ to: `/editor/$docId`, params: { docId: data![0].id! } });
 
       // ? Inform user
       toast.success("Your Document has been created");

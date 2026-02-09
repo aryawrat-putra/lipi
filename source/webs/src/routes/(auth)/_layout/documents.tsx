@@ -8,40 +8,21 @@ export const Route = createFileRoute('/(auth)/_layout/documents')({
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
-import { CalendarDays, FileClock, FilePlus, ShieldUser, SlidersHorizontal } from "lucide-react";
+import { CalendarDays, FileClock, ShieldUser, SlidersHorizontal } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, } from "@/components/ui/pagination"
-import { toast } from "sonner"
 import DocumentCard from '@/components/cards/document-card';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { getAllDocs, postDoc } from '@/services/document';
+import { useQuery } from '@tanstack/react-query';
+import { getAllDocs } from '@/services/document';
 import Loading from '@/components/non-interactive/loader';
 import SomethingWentWrong from '@/components/non-interactive/error';
 import { cn } from '@/lib/utils';
+import CreateDocument from '@/components/forms/document';
 
 
 function DocumentPage() {
   const navigate = useNavigate({ from: '/documents' });
   const { page, search, sortBy, sortOrder, limit } = useSearch({ from: '/(auth)/_layout/documents' });
-
-  const createDocument = useMutation({
-    mutationKey: ['create-document'],
-    mutationFn: () => postDoc(),
-    onSuccess: ({ data }) => {
-      // ? Navigate user to doc link
-      navigate({ to: `/editor/$docId`, params: { docId: data![0].id! } });
-
-      // ? Inform user
-      toast.success("Your Document has been created");
-    },
-    onError: (e) => {
-      console.error('Failed to create doc!!!')
-      console.error(e);
-
-      toast.error("Failed to create document");
-
-    }
-  })
 
   const { isPending, error, data, isSuccess } = useQuery({
     queryKey: ['all-documents', page, search, sortBy, sortOrder, limit],
@@ -66,10 +47,7 @@ function DocumentPage() {
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button
-              disabled={createDocument.isPending}
-              onClick={() => createDocument.mutate()}
-            >Create Document</Button>
+            <CreateDocument />
           </EmptyContent>
         </Empty>
       ) : (
@@ -130,13 +108,7 @@ function DocumentPage() {
                   <span className="max-md:hidden">Filter By Date</span>
                 </Button>
 
-                <Button
-                  disabled={createDocument.isPending}
-                  onClick={() => createDocument.mutate()}
-                >
-                  <FilePlus />
-                  New Document
-                </Button>
+                <CreateDocument />
               </div>
             </div>
 

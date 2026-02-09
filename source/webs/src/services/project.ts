@@ -43,3 +43,17 @@ export async function getAllProjects(params: z.infer<typeof documentPaginationAn
         }
     }
 };
+
+export async function getProjectById(id: string) {
+    try {
+        return await http.get(`api/project/${id}`).json<ApiResponse<typeof project.$inferSelect[]>>();
+    } catch (error) {
+        if (error instanceof HTTPError) {
+            const errorBody = await error.response.json();
+            throw new Error(`${errorBody.message} - ${errorBody.payload}`);
+        } else {
+            console.error('[getAllProjects] Unexpected Error:', error);
+            throw new Error('Unexpected error occurred');
+        }
+    }
+};

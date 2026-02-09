@@ -244,7 +244,7 @@ export const documentController = new Hono()
     // TODO list of all endpoints needed
     // ? Get all documents of projectId
     .get(
-        '/:projectId/documents',
+        '/:projectId/documents', 
         validator("param", (value, c) => {
             if (!isCuid(value.projectId)) {
                 return c.json(
