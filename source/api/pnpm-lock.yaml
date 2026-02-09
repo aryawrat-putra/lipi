@@ -20,6 +20,9 @@ importers:
       drizzle-orm:
         specifier: ^0.45.1
         version: 0.45.1(@types/pg@8.16.0)(kysely@0.28.10)(mysql2@3.15.3)(pg@8.17.1)
+      drizzle-zod:
+        specifier: ^0.8.3
+        version: 0.8.3(drizzle-orm@0.45.1(@types/pg@8.16.0)(kysely@0.28.10)(mysql2@3.15.3)(pg@8.17.1))(zod@4.3.5)
       hono:
         specifier: ^4.11.1
         version: 4.11.4
@@ -790,6 +793,12 @@ packages:
       sqlite3:
         optional: true
 
+  drizzle-zod@0.8.3:
+    resolution: {integrity: sha512-66yVOuvGhKJnTdiqj1/Xaaz9/qzOdRJADpDa68enqS6g3t0kpNkwNYjUuaeXgZfO/UWuIM9HIhSlJ6C5ZraMww==}
+    peerDependencies:
+      drizzle-orm: '>=0.36.0'
+      zod: ^3.25.0 || ^4.0.0
+
   error-causes@3.0.2:
     resolution: {integrity: sha512-i0B8zq1dHL6mM85FGoxaJnVtx6LD5nL2v0hlpGdntg5FOSyzQ46c9lmz5qx0xRS2+PWHGOHcYxGIBC5Le2dRMw==}
 
@@ -1465,6 +1474,11 @@ snapshots:
       kysely: 0.28.10
       mysql2: 3.15.3
       pg: 8.17.1
+
+  drizzle-zod@0.8.3(drizzle-orm@0.45.1(@types/pg@8.16.0)(kysely@0.28.10)(mysql2@3.15.3)(pg@8.17.1))(zod@4.3.5):
+    dependencies:
+      drizzle-orm: 0.45.1(@types/pg@8.16.0)(kysely@0.28.10)(mysql2@3.15.3)(pg@8.17.1)
+      zod: 4.3.5
 
   error-causes@3.0.2: {}
 

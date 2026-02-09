@@ -1,5 +1,7 @@
 import 'dotenv/config';
 
+const SERVER_PORT = process.env.SERVER_PORT;
+
 const DB = {
     database_url: process.env.DATABASE_URL,
     database: process.env.DATABASE_NAME,
@@ -13,4 +15,4 @@ const DB = {
 
 const BETTER_AUTH_CLIENT_URL = process.env.BETTER_AUTH_CLIENT_URL;
 
-export { DB, BETTER_AUTH_CLIENT_URL };
+export { DB, BETTER_AUTH_CLIENT_URL, SERVER_PORT };

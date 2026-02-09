@@ -43,6 +43,28 @@ export async function getAllDocs(params: z.infer<typeof documentPaginationAndFil
     }
 };
 
+export async function getAllFavoriteDocs(params: z.infer<typeof documentPaginationAndFilters>) {
+    try {
+        return await http.get('api/document/favorites', {
+            searchParams: {
+                page: params.page,
+                limit: params.limit,
+                ...(params.search && { search: params.search }),
+                ...(params.sortBy && { sortBy: params.sortBy }),
+                ...(params.sortOrder && { sortOrder: params.sortOrder }),
+            }
+        }).json<ApiResponse<typeof document.$inferSelect[]>>();
+    } catch (error) {
+        if (error instanceof HTTPError) {
+            const errorBody = await error.response.json();
+            throw new Error(`${errorBody.message} - ${errorBody.payload}`);
+        } else {
+            console.error('[postDoc] Unexpected Error:', error);
+            throw new Error('Unexpected error occurred');
+        }
+    }
+};
+
 // export async function postDoc(): Promise<> {
 //     try {
 //         const res = await http.post('auth', { json: { pin } }).json<RegisterResType>();

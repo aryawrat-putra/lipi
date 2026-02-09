@@ -13,7 +13,7 @@ export default function DocumentCard({ id, title, updatedAt, allVersionsIds }: t
     return (
         <ContextMenu>
             <ContextMenuTrigger>
-                <Link to="/documents/$docId" params={{ docId: id! }}>
+                <Link to="/editor/$docId" params={{ docId: id! }}>
                     <Card className='justify-between border border-border/50 transition-all duration-300 cursor-pointer hover:border-border hover:shadow-md' title={title}>
                         <CardHeader>
                             <CardTitle className='text-pretty truncate'>{title}</CardTitle>
@@ -29,7 +29,7 @@ export default function DocumentCard({ id, title, updatedAt, allVersionsIds }: t
                                         <DropdownMenuItem onClick={(e) => e.stopPropagation()}><FilePen /> Rename</DropdownMenuItem>
                                         <DropdownMenuItem onClick={(e) => e.stopPropagation()} className='text-primary'><FileHeart className='text-primary' /> Favorite</DropdownMenuItem>
                                         <DropdownMenuItem onClick={(e) => e.stopPropagation()} asChild>
-                                            <Link to={`/docs/$docId`} params={{ docId: id! }} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link>
+                                            <Link to={`/editor/$docId`} params={{ docId: id! }} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem onClick={(e) => e.stopPropagation()} className='text-destructive'><Trash2 className='text-destructive' /> Delete</DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -54,7 +54,7 @@ export default function DocumentCard({ id, title, updatedAt, allVersionsIds }: t
             <ContextMenuContent>
                 <ContextMenuItem><FilePen /> Rename</ContextMenuItem>
                 <ContextMenuItem className='text-primary'><FileHeart className='text-primary' /> Favorite</ContextMenuItem>
-                <ContextMenuItem asChild><Link to={`/docs/$docId`} params={{ docId: id! }} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link></ContextMenuItem>
+                <ContextMenuItem asChild><Link to={`/editor/$docId`} params={{ docId: id! }} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link></ContextMenuItem>
                 <ContextMenuItem className='text-destructive'><Trash2 className='text-destructive' /> Delete</ContextMenuItem>
             </ContextMenuContent>
         </ContextMenu>

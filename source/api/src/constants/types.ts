@@ -36,7 +36,13 @@ export const projectPaginationAndFilters = z.object({
     sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
 });
 
-export const createProjectSchema = z.object({
-    name: z.string().min(3).max(256),
-    description: z.string().max(512).default(''),
-})
+import { document, project, documentVersion } from '../db/schema';
+import { createInsertSchema, createUpdateSchema } from 'drizzle-zod';
+
+export const createProjectSchema = createInsertSchema(project);
+export const updateProjectSchema = createUpdateSchema(project);
+
+export const updateDocumentSchema = createUpdateSchema(document);
+
+export const createDocumentVersionSchema = createInsertSchema(documentVersion);
+export const updateDocumentVersionSchema = createUpdateSchema(documentVersion);

@@ -9,6 +9,7 @@ import { Controller, useForm } from "react-hook-form"
 import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
+import { authClient } from "@/lib/auth-client"
 
 import { createProjectSchema } from '../../../../api/src/constants/types';
 
@@ -20,18 +21,22 @@ import { useState } from "react"
 export default function CreateProjectForm() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const navigate = useNavigate({ from: '/dashboard' });
+    const creator = authClient.useSession().data?.user;
 
     const form = useForm<z.input<typeof createProjectSchema>>({
         resolver: standardSchemaResolver(createProjectSchema),
         defaultValues: {
-            name: '',
-            description: '',
+            ownerId: creator!.id
         }
     })
 
     const createProject = useMutation({
         mutationKey: ['create-project'],
-        mutationFn: (values: z.input<typeof createProjectSchema>) => postProject({ description: values.description!, name: values.name }),
+        mutationFn: (values: z.input<typeof createProjectSchema>) => postProject({
+            description: values.description!,
+            name: values.name,
+            ownerId: creator!.id,
+        }),
         onSuccess: ({ data }) => {
             // ? Navigate user to project link 
             navigate({ to: `/projects/$projectId`, params: { projectId: data![0].id! } });
@@ -61,7 +66,7 @@ export default function CreateProjectForm() {
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="">
+            <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Create Project</DialogTitle>
                     <DialogDescription>
@@ -69,58 +74,66 @@ export default function CreateProjectForm() {
                         done.
                     </DialogDescription>
                 </DialogHeader>
+                <form
+                    id="create-project-form"
+                    onSubmit={form.handleSubmit((v) => createProject.mutate(v))}
+                >
 
-                <FieldGroup>
-                    <Controller
-                        name="name"
-                        control={form.control}
-                        render={({ field, fieldState }) => (
-                            <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor="name">Name</FieldLabel>
-                                <Input
-                                    id="name"
-                                    type="text"
-                                    required={true}
-                                    placeholder="Manhattan Project"
-                                    {...field}
-                                    aria-invalid={fieldState.invalid}
-                                />
-                                {fieldState.invalid && (
-                                    <FieldError errors={[fieldState.error]} />
-                                )}
-                            </Field>
-                        )}
-                    />
-                    <Controller
-                        name="description"
-                        control={form.control}
-                        render={({ field, fieldState }) => (
-                            <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor="description">Description</FieldLabel>
-                                <Input
-                                    id="description"
-                                    type="text"
-                                    placeholder="Get a Nuke ASAP team"
-                                    {...field}
-                                    aria-invalid={fieldState.invalid}
-                                />
-                                {fieldState.invalid && (
-                                    <FieldError errors={[fieldState.error]} />
-                                )}
-                            </Field>
-                        )}
-                    />
-                </FieldGroup>
+                    <FieldGroup>
+                        <Controller
+                            name="name"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                                    <Input
+                                        id="name"
+                                        type="text"
+                                        placeholder="Manhattan Project"
+                                        {...field}
+                                        aria-invalid={fieldState.invalid}
+                                    />
+                                    {fieldState.invalid && (
+                                        <FieldError errors={[fieldState.error]} />
+                                    )}
+                                </Field>
+                            )}
+                        />
+                        <Controller
+                            name="description"
+                            control={form.control}
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel htmlFor="description">Description</FieldLabel>
+                                    <Input
+                                        id="description"
+                                        type="text"
+                                        placeholder="Get a Nuke ASAP team"
+                                        {...field}
+                                        value={field.value ?? ""}
+                                        aria-invalid={fieldState.invalid}
+                                    />
+                                    {fieldState.invalid && (
+                                        <FieldError errors={[fieldState.error]} />
+                                    )}
+                                </Field>
+                            )}
+                        />
+                    </FieldGroup>
 
-                <DialogFooter>
-                    <Button type="button" variant="outline" onClick={() => form.reset()}>
-                        Reset
-                    </Button>
-                    <Button type="submit" disabled={form.formState.isSubmitting} onClick={form.handleSubmit((values: z.input<typeof createProjectSchema>) => createProject.mutate(values))}>
-                        {form.formState.isSubmitting && <Spinner />}
-                        Create
-                    </Button>
-                </DialogFooter>
+                    <DialogFooter>
+                        <Button type="button" variant="outline" onClick={() => form.reset()}>
+                            Reset
+                        </Button>
+                        <Button
+                            type="submit"
+                            disabled={createProject.isPending}
+                        >
+                            {createProject.isPending && <Spinner />}
+                            Create
+                        </Button>
+                    </DialogFooter>
+                </form>
             </DialogContent>
         </Dialog >
     )

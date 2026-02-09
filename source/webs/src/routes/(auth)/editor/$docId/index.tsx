@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useParams } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/(auth)/_layout/documents/$docId/')({
+export const Route = createFileRoute('/(auth)/editor/$docId/')({
   component: RouteComponent,
 })
 
@@ -23,7 +23,7 @@ import { FindAndReplaceCard } from '@/components/doc/card/find-replace-card';
 
 
 function RouteComponent() {
-  let { docId } = useParams({ from: '/(auth)/_layout/documents/$docId/' });
+  let { docId } = useParams({ from: '/(auth)/editor/$docId/' });
   const [isToolbarOpen, setIsToolbarOpen] = useState<boolean>(true);
   const [additionalDialog, setAdditionalDialog] = useState<'none' | 'f-n-r'>('none')
 
@@ -70,7 +70,7 @@ function RouteComponent() {
           <CollapsibleContent>
             <div className='flex justify-between items-center gap-2'>
               <nav className='flex justify-between items-center gap-4 '>
-                <Link to='/'><Logo /></Link>
+                <Link to='/dashboard'><Logo /></Link>
                 <div className='space-y-2'>
                   <div className='flex gap-2 items-center'>
                     <Input

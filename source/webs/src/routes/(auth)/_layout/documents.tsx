@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router'
 
-import { documentPaginationAndFilters } from '../../../../../../api/src/constants/types';
-export const Route = createFileRoute('/(auth)/_layout/documents/')({
+import { documentPaginationAndFilters } from '../../../../../api/src/constants/types';
+export const Route = createFileRoute('/(auth)/_layout/documents')({
   component: DocumentPage,
   validateSearch: (search) => documentPaginationAndFilters.parse(search),
 })
@@ -22,14 +22,14 @@ import { cn } from '@/lib/utils';
 
 function DocumentPage() {
   const navigate = useNavigate({ from: '/documents' });
-  const { page, search, sortBy, sortOrder, limit } = useSearch({ from: '/(auth)/_layout/documents/' });
+  const { page, search, sortBy, sortOrder, limit } = useSearch({ from: '/(auth)/_layout/documents' });
 
   const createDocument = useMutation({
     mutationKey: ['create-document'],
     mutationFn: () => postDoc(),
     onSuccess: ({ data }) => {
       // ? Navigate user to doc link
-      navigate({ to: `/docs/$docId`, params: { docId: data![0].id! } });
+      navigate({ to: `/editor/$docId`, params: { docId: data![0].id! } });
 
       // ? Inform user
       toast.success("Your Document has been created");
@@ -44,7 +44,7 @@ function DocumentPage() {
   })
 
   const { isPending, error, data, isSuccess } = useQuery({
-    queryKey: ['all-categories', page, search, sortBy, sortOrder, limit],
+    queryKey: ['all-documents', page, search, sortBy, sortOrder, limit],
     queryFn: () => getAllDocs({ page, search, sortBy, sortOrder, limit }),
   });
 

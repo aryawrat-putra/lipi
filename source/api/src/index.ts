@@ -9,7 +9,12 @@ declare module 'hono' {
   interface ContextVariableMap {
     session: typeof auth.$Infer.Session
   }
-}
+};
+
+import { projectController } from "@/controllers/project";
+import { documentController } from "@/controllers/document";
+import { documentVersionController } from "@/controllers/document-version";
+import { CheckAuthenticity } from "@/controllers/auth-middleware";
 
 app
   .use('*', logger((info) => {
@@ -29,44 +34,28 @@ app
     credentials: true,
     allowHeaders: ['Content-Type', 'Authorization'],
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  }));
-
-app.get('/', (c) => {
-  return c.text('Hello World!!');
-});
-
-import { DB } from "@/constants";
-
-app.get('/env', (c) => {
-  return c.text(JSON.stringify(DB));
-});
-
-app.on(["POST", "GET"], "/api/auth/*", (c) =>
-  auth.handler(c.req.raw)
-);
-
-import { projectController } from "@/controllers/project";
-import { documentController } from "@/controllers/document";
-import { documentVersionController } from "@/controllers/document-version";
-import { CheckAuthenticity } from "@/controllers/auth-middleware";
-
-app.get('/api/status', (c) =>
-  c.json({ status: 'ok', service: 'lipi-api' })
-)
-
-app.use('/api/*', CheckAuthenticity)
-app.route('/api/document', documentController)
-app.route('/api/project', projectController)
-app.route('/api/document-version', documentVersionController)
+  }))
+  .on(["POST", "GET"], "/api/auth/*", (c) =>
+    auth.handler(c.req.raw)
+  )
+  .get('/api/health', (c) =>
+    c.json({ status: 'ok', service: 'lipi-api' })
+  )
+  .use('/api/*', CheckAuthenticity)
+  .route('/api/project', projectController)
+  .route('/api/document', documentController)
+  .route('/api/document-version', documentVersionController)
 
 
 import { serve } from "@hono/node-server";
 import { logger } from "hono/logger";
+import { SERVER_PORT } from "@/constants";
 
 serve({
   fetch: app.fetch,
-  port: 8787
+  port: Number(SERVER_PORT)
 }, (info) => {
-  console.log(`API live on http://localhost:${info.port}`)
+  console.log(`✅ Server listening on http://localhost:${info.port}.`)
+  console.log(`🔗 Visit http://localhost:${info.port}/api/health to check status.`)
 })
 

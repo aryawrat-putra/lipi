@@ -1,319 +1,381 @@
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';
 import { HTTPException } from 'hono/http-exception';
+import { and, or, ilike, arrayContains, desc, sql, eq } from "drizzle-orm";
+import { isCuid } from "@paralleldrive/cuid2";
+
+import { db } from "@/db";
+import { documentVersion, document } from '@/db/schema';
+
+import { generalApiResponse } from '@/lib/utils';
+import { createDocumentVersionSchema, updateDocumentVersionSchema } from '@/constants/types';
 
 export const documentVersionController = new Hono()
-// // ? Get all categories with pagination, search, and sorting
-// .get(
-//     '/',
-//     validator('query', (value, c) => {
-//         const result = getCategoriesQuerySchema.safeParse(value);
-//         if (!result.success) {
-//             return c.json(genApiResponse('Invalid query parameters', `-- ${result.error.issues[0].path[0]} -- ${result.error.issues[0].message}`), 400);
-//         }
-//         return result.data;
-//     }),
-//     async (c) => {
-//         try {
-//             const { page, limit, search, sortBy, sortOrder } = c.req.valid('query');
+    // TODO list of all endpoints needed  |  cerate read update delete
+    // ? Create a document version for
+    .post(
+        '/',
+        validator('json', (value, c) => {
+            const result = createDocumentVersionSchema.safeParse(value);
+            if (!result.success) {
+                const issue = result.error.issues[0];
 
-//             // * Build query
-//             const query: any = {};
-//             if (search) {
-//                 query.$or = [
-//                     { name: { $regex: search, $options: 'i' } },
-//                     { description: { $regex: search, $options: 'i' } },
-//                 ];
-//             }
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: `Invalid  format '${String(issue.path[0])}': ${issue.message}`,
+                        statusCode: 400,
+                        errors: result.error.flatten().fieldErrors,
+                    }),
+                    400
+                );
+            } return result.data;
+        }),
+        async (c) => {
+            try {
+                let creatorId = c.get('session').user.id;
+                const data = c.req.valid('json');
 
-//             // * Calculate pagination
-//             const skip = (page - 1) * limit;
+                const latestVersion = await db
+                    .select({ versionNumber: documentVersion.versionNumber })
+                    .from(documentVersion)
+                    .where(eq(documentVersion.documentId, data.documentId))
+                    .orderBy(desc(documentVersion.versionNumber))
+                    .limit(1);
 
-//             // * Build sort object
-//             const sort: any = {};
-//             sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
+                const nextVersionNumber =
+                    latestVersion.length > 0
+                        ? latestVersion[0].versionNumber + 1
+                        : 1;
 
-//             // * Execute queries
-//             const [categories, totalCount] = await Promise.all([
-//                 CategoryModel
-//                     .find(query)
-//                     .sort(sort)
-//                     .skip(skip)
-//                     .limit(limit)
-//                     .lean(),
-//                 CategoryModel.countDocuments(query),
-//             ]);
+                const [createdVersion] = await db
+                    .insert(documentVersion)
+                    .values({
+                        documentId: data.documentId,
+                        content: data.content,
+                        createdByUserId: creatorId,
+                        versionNumber: nextVersionNumber,
+                    })
+                    .returning();
 
-//             const totalPages = Math.ceil(totalCount / limit);
-//             const hasNextPage = page < totalPages;
-//             const hasPrevPage = page > 1;
+                await db
+                    .update(document)
+                    .set({
+                        allVersionsIds: sql`${document.allVersionsIds} || ${createdVersion.id}`,
+                        lastEditedByUserId: creatorId,
+                        updatedAt: new Date(),
+                    })
+                    .where(eq(document.id, data.documentId));
 
-//             return c.json(genApiResponse('Done', {
-//                 categories,
-//                 pagination: {
-//                     currentPage: page,
-//                     totalPages,
-//                     totalCount,
-//                     hasNextPage,
-//                     hasPrevPage,
-//                     limit,
-//                 },
-//             }, true), 200);
-//         } catch (error) {
-//             console.error('Error fetching categories:', error);
-//             return c.json(genApiResponse('Failed to fetch categories'), 500);
-//         }
-//     }
-// )
+                return c.json(
+                    generalApiResponse({
+                        success: true,
+                        message: 'Doc version created successfully',
+                        data: createdVersion,
+                        statusCode: 201,
+                    }),
+                    201
+                );
+            } catch (error: any) {
+                if (error instanceof HTTPException) {
+                    throw error;
+                }
 
-// // ? Create a new category
-// .post(
-//     '/',
-//     validator('json', (value, c) => {
-//         const result = createCategorySchema.safeParse(value);
-//         if (!result.success) {
-//             return c.json(genApiResponse('Invalid request body', `-- ${result.error.issues[0].path[0]} -- ${result.error.issues[0].message}`), 400);
-//         }
-//         return result.data;
-//     }),
-//     async (c) => {
-//         try {
-//             const body = c.req.valid('json');
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: "Failed to create Doc version",
+                        statusCode: 500,
+                        errors: error
+                    }),
+                    500
+                );
+            }
+        }
+    )
+    // ? Get a document version details by id :docVersionId
+    .get(
+        '/:docVersionId',
+        validator("param", (value, c) => {
+            if (!isCuid(value.docVersionId)) {
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: `Invalid Dov Version Id`,
+                        statusCode: 400,
+                    }),
+                    400
+                );
+            } return value;
+        }),
+        async (c) => {
+            try {
+                const { docVersionId } = c.req.valid("param");
 
-//             // * Check if category with same name already exists
-//             const existingCategory = await CategoryModel.findOne({
-//                 name: { $regex: `^${body.name}$`, $options: 'i' }
-//             });
+                const version = await db
+                    .select()
+                    .from(documentVersion)
+                    .where(eq(documentVersion.id, docVersionId))
+                    .limit(1);
 
-//             if (existingCategory) {
-//                 return c.json(genApiResponse('Category with this name already exists'), 409);
-//             }
+                if (version.length === 0) {
+                    return c.json(
+                        generalApiResponse({
+                            success: false,
+                            message: 'Document version not found',
+                            statusCode: 404,
+                        }),
+                        404
+                    );
+                }
 
-//             const newCategory = new CategoryModel(body);
-//             const savedCategory = await newCategory.save();
+                return c.json(
+                    generalApiResponse({
+                        success: true,
+                        message: 'Document version fetched successfully',
+                        data: version[0],
+                        statusCode: 200,
+                    }),
+                    200
+                );
+            } catch (error: any) {
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: 'Failed to fetch document version',
+                        statusCode: 500,
+                        errors: error,
+                    }),
+                    500
+                );
+            }
+        }
+    )
+    // ? Update a document version details by id :docVersionId
+    .patch(
+        '/:docVersionId',
+        validator("param", (value, c) => {
+            if (!isCuid(value.docVersionId)) {
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: `Invalid Dov Version Id`,
+                        statusCode: 400,
+                    }),
+                    400
+                );
+            } return value;
+        }),
+        validator('json', (value, c) => {
+            const result = updateDocumentVersionSchema.safeParse(value);
+            if (!result.success) {
+                const issue = result.error.issues[0];
 
-//             return c.json(genApiResponse('Category created successfully', savedCategory, true), 201);
-//         } catch (error: any) {
-//             if (error instanceof HTTPException) {
-//                 throw error;
-//             }
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: `Invalid  format '${String(issue.path[0])}': ${issue.message}`,
+                        statusCode: 400,
+                        errors: result.error.flatten().fieldErrors,
+                    }),
+                    400
+                );
+            } return result.data;
+        }),
+        async (c) => {
+            try {
+                const { docVersionId } = c.req.valid("param");
+                const userId = c.get('session').user.id;
+                const updateInput = c.req.valid('json');
 
-//             console.error('Error creating category:', error);
+                const updated = await db
+                    .update(documentVersion)
+                    .set(updateInput)
+                    .where(eq(documentVersion.id, docVersionId))
+                    .returning();
 
-//             // * Handle MongoDB validation errors
-//             if (error.name === 'ValidationError') {
-//                 return c.json(genApiResponse('Validation failed', error.errors), 400);
-//             }
+                if (updated.length === 0) {
+                    return c.json(
+                        generalApiResponse({
+                            success: false,
+                            message: 'Document version not found',
+                            statusCode: 404,
+                        }),
+                        404
+                    );
+                }
 
-//             return c.json(genApiResponse('Failed to create category'), 500);
-//         }
-//     }
-// )
+                await db
+                    .update(document)
+                    .set({
+                        lastEditedByUserId: userId,
+                        updatedAt: new Date(),
+                    })
+                    .where(eq(document.id, updated[0].documentId));
 
-// // ? Get category by ID
-// .get(
-//     '/:category-id',
-//     validator('param', (value, c) => {
-//         const result = categoryParamsSchema.safeParse(value);
-//         if (!result.success) {
-//             return c.json(genApiResponse('Invalid category ID', `-- ${result.error.issues[0].path[0]} -- ${result.error.issues[0].message}`), 400);
-//         }
-//         return result.data;
-//     }),
-//     async (c) => {
-//         try {
-//             const { 'category-id': categoryId } = c.req.valid('param');
+                return c.json(
+                    generalApiResponse({
+                        success: true,
+                        message: 'Document version updated successfully',
+                        data: updated[0],
+                        statusCode: 200,
+                    }),
+                    200
+                );
+            } catch (error: any) {
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: 'Failed to update document version',
+                        statusCode: 500,
+                        errors: error,
+                    }),
+                    500
+                );
+            }
+        }
+    )
+    // ? Delete a document version details by id :docVersionId
+    .delete(
+        '/:docVersionId',
+        validator("param", (value, c) => {
+            if (!isCuid(value.docVersionId)) {
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: `Invalid Dov Version Id`,
+                        statusCode: 400,
+                    }),
+                    400
+                );
+            } return value;
+        }),
+        async (c) => {
+            try {
+                const { docVersionId } = c.req.valid("param");
+                let creatorId = c.get('session').user.id;
 
-//             const category = await CategoryModel
-//                 .findById(categoryId)
-//                 .populate('tasks')
-//                 .lean();
+                let condition = and(
+                    eq(documentVersion.id, docVersionId),
+                    eq(documentVersion.createdByUserId, creatorId),
+                );
 
-//             if (!category) {
-//                 return c.json(genApiResponse('Invalid query parameters'), 400);
-//             }
+                const version = await db
+                    .select()
+                    .from(documentVersion)
+                    .where(condition)
+                    .limit(1);
 
-//             return c.json(genApiResponse('Category details', category, true), 200);
-//         } catch (error) {
-//             if (error instanceof HTTPException) {
-//                 throw error;
-//             }
+                if (version.length === 0) {
+                    return c.json(
+                        generalApiResponse({
+                            success: false,
+                            message: 'Document version not found',
+                            statusCode: 404,
+                        }),
+                        404
+                    );
+                }
 
-//             console.error('Error fetching category:', error);
-//             return c.json(genApiResponse('Failed to fetch category'), 500);
-//         }
-//     }
-// )
+                const versionsCount = await db
+                    .select({ count: sql<number>`count(*)` })
+                    .from(documentVersion)
+                    .where(eq(documentVersion.documentId, version[0].documentId));
 
-// // ? Update category by ID
-// .put(
-//     '/:category-id',
-//     // * Params Validator
-//     validator('param', (value, c) => {
-//         const result = categoryParamsSchema.safeParse(value);
-//         if (!result.success) {
-//             return c.json(genApiResponse(`-- ${result.error.issues[0].path[0]} -- ${result.error.issues[0].message}`), 400);
-//         }
-//         return result.data;
-//     }),
-//     // * Update data Validator
-//     validator('json', (value, c) => {
-//         const result = updateCategorySchema.safeParse(value);
-//         if (!result.success) {
-//             return c.json(genApiResponse('Invalid request body', `-- ${result.error.issues[0].path[0]} -- ${result.error.issues[0].message}`), 409);
-//         }
-//         return result.data;
-//     }),
-//     async (c) => {
-//         try {
-//             const { 'category-id': categoryId } = c.req.valid('param');
-//             const body = c.req.valid('json');
+                if (versionsCount[0].count <= 1) {
+                    return c.json(
+                        generalApiResponse({
+                            success: false,
+                            message: 'Cannot delete the only document version',
+                            statusCode: 400,
+                        }),
+                        400
+                    );
+                }
 
-//             // * Check if category exists
-//             const existingCategory = await CategoryModel.findById(categoryId);
-//             if (!existingCategory) {
-//                 return c.json(genApiResponse('Category not found'), 404);
-//             }
+                await db.delete(documentVersion).where(condition);
 
-//             // * Check for name conflicts if name is being updated
-//             if (body.name && body.name !== existingCategory.name) {
-//                 const duplicateCategory = await CategoryModel.findOne({
-//                     name: { $regex: `^${body.name}$`, $options: 'i' },
-//                     _id: { $ne: categoryId },
-//                 });
+                await db.update(document)
+                    .set({
+                        allVersionsIds: sql`array_remove(${document.allVersionsIds}, ${docVersionId})`,
+                    })
+                    .where(condition);
 
-//                 if (duplicateCategory) {
-//                     return c.json(genApiResponse('Category with this name already exists'), 409);
-//                 }
-//             }
+                return c.json(
+                    generalApiResponse({
+                        success: true,
+                        message: 'Document version deleted successfully',
+                        statusCode: 200,
+                    }),
+                    200
+                );
+            } catch (error: any) {
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: 'Failed to delete document version',
+                        statusCode: 500,
+                        errors: error,
+                    }),
+                    500
+                );
+            }
+        }
+    )
+    // ? Get all versions of a :docId document
+    .get(
+        '/:docId/versions',
+        validator("param", (value, c) => {
+            if (!isCuid(value.docId)) {
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: `Invalid Doc Id`,
+                        statusCode: 400,
+                    }),
+                    400
+                );
+            } return value;
+        }),
+        async (c) => {
+            try {
+                const { docId } = c.req.valid("param");
+                let creatorId = c.get('session').user.id;
 
-//             const updatedCategory = await CategoryModel
-//                 .findByIdAndUpdate(
-//                     categoryId,
-//                     { $set: body },
-//                     { new: true, runValidators: true }
-//                 )
-//                 // .populate('tasks')
-//                 .lean();
+                // might be wrong
+                const condition = and(
+                    eq(documentVersion.documentId, docId),
+                    or(
+                        eq(document.createdByUserId, creatorId),
+                        arrayContains(document.editorsId, [creatorId])
+                    )
+                );
 
-//             return c.json(genApiResponse('Category updated successfully', updatedCategory, true), 200);
-//         } catch (error: any) {
-//             if (error instanceof HTTPException) {
-//                 throw error;
-//             }
+                const versions = await db
+                    .select()
+                    .from(documentVersion)
+                    .where(condition)
+                    .orderBy(desc(documentVersion.versionNumber));
 
-//             console.error('Error updating category:', error);
-
-//             // * Handle MongoDB validation errors
-//             if (error.name === 'ValidationError') {
-//                 return c.json(genApiResponse('Validation failed', error.errors), 400);
-//             }
-
-//             return c.json(genApiResponse('Failed to update category'), 500);
-//         }
-//     }
-// )
-
-// // ? Delete category by ID
-// .delete(
-//     '/:category-id',
-//     validator('param', (value, c) => {
-//         const result = categoryParamsSchema.safeParse(value);
-//         if (!result.success) {
-//             return c.json(genApiResponse('Invalid category ID', `-- ${result.error.issues[0].path[0]} -- ${result.error.issues[0].message}`), 400);
-//         }
-//         return result.data;
-//     }),
-//     async (c) => {
-//         try {
-//             const { 'category-id': categoryId } = c.req.valid('param');
-
-//             const deletedCategory = await CategoryModel.findByIdAndDelete(categoryId).lean<{ _id: string, name: string }>();
-
-//             if (!deletedCategory) {
-//                 return c.json(genApiResponse('Category not found'), 404);
-//             };
-
-//             return c.json(genApiResponse('Category deleted successfully', {
-//                 deletedCategory: {
-//                     id: deletedCategory._id,
-//                     name: deletedCategory.name,
-//                 },
-//             }, true), 200);
-//         } catch (error) {
-//             if (error instanceof HTTPException) {
-//                 throw error;
-//             }
-//             console.error('Error deleting category:', error);
-//             return c.json(genApiResponse('Failed to delete category'), 500);
-//         }
-//     }
-// )
-
-// // ? Get category statistics
-// .get(
-//     '/:category-id/stats',
-//     validator('param', (value, c) => {
-//         const result = categoryParamsSchema.safeParse(value);
-//         if (!result.success) {
-//             return c.json(genApiResponse('Invalid category ID', `-- ${result.error.issues[0].path[0]} -- ${result.error.issues[0].message}`), 400);
-//         }
-//         return result.data;
-//     }),
-//     async (c) => {
-//         try {
-//             const { 'category-id': categoryId } = c.req.valid('param');
-
-//             const category = await CategoryModel.findById(categoryId).lean<{ name: string }>();
-//             if (!category) {
-//                 return c.json(genApiResponse('Category not found'), 404);
-//             }
-
-//             const stats = await CategoryModel.aggregate([
-//                 { $match: { _id: new Types.ObjectId(categoryId) } },
-//                 {
-//                     $lookup: {
-//                         from: 'tasks',
-//                         localField: 'tasks',
-//                         foreignField: '_id',
-//                         as: 'taskDetails',
-//                     },
-//                 },
-//                 {
-//                     $project: {
-//                         name: 1,
-//                         totalTasks: { $size: '$taskDetails' },
-//                         completedTasks: {
-//                             $size: {
-//                                 $filter: {
-//                                     input: '$taskDetails',
-//                                     cond: { $eq: ['$$this.done', true] },
-//                                 },
-//                             },
-//                         },
-//                         pendingTasks: {
-//                             $size: {
-//                                 $filter: {
-//                                     input: '$taskDetails',
-//                                     cond: { $ne: ['$$this.done', false] },
-//                                 },
-//                             },
-//                         },
-//                     },
-//                 },
-//             ]);
-
-//             return c.json(genApiResponse(
-//                 'Category Stats',
-//                 stats[0] || { name: category.name, totalTasks: 0, completedTasks: 0, pendingTasks: 0 },
-//                 true), 200);
-//         } catch (error) {
-//             if (error instanceof HTTPException) {
-//                 throw error;
-//             }
-
-//             console.error('Error fetching category stats:', error);
-//             return c.json(genApiResponse('Failed to fetch category statistics'), 500);
-//         }
-//     }
-// );
+                return c.json(
+                    generalApiResponse({
+                        success: true,
+                        message: 'Document versions fetched successfully',
+                        data: versions,
+                        statusCode: 200,
+                    }),
+                    200
+                );
+            } catch (error: any) {
+                return c.json(
+                    generalApiResponse({
+                        success: false,
+                        message: 'Failed to fetch document versions',
+                        statusCode: 500,
+                        errors: error,
+                    }),
+                    500
+                );
+            }
+        }
+    )

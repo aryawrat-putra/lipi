@@ -94,7 +94,7 @@ export const project = pgTable('project', {
 }, (table) => [
   index('project_ownerId_idx').on(table.ownerId),
   index('project_slug_idx').on(table.slug),
-]);
+]); 
 
 export const document = pgTable('document', {
   id: varchar('id', { length: 128 }).$defaultFn(() => createId()).unique(),
@@ -106,6 +106,7 @@ export const document = pgTable('document', {
   allVersionsIds: text('all_versions_ids').array().notNull().default([]),
   isDeleted: boolean('is_deleted').notNull().default(false),
   isPublished: boolean('is_published').default(false).notNull(),
+  isFavorite: boolean('is_favorite').default(false).notNull(),
   publishedAt: timestamp('published_at'),
   lockedByUserId: text('locked_by_user_id').references(() => user.id, { onDelete: 'set null' }),
   lockedAt: timestamp('locked_at'),
