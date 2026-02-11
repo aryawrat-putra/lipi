@@ -560,7 +560,7 @@ export const documentController = new Hono()
     )
     // ? Toggle favorite of a document with :docId
     .patch(
-        '/:docId/favorite',
+        '/:docId/favorite', 
         validator("param", (value, c) => {
             if (!isCuid(value.docId)) {
                 return c.json(
@@ -604,7 +604,6 @@ export const documentController = new Hono()
                             success: true,
                             message: `${updated[0].isFavorite ? 'Document added in Favorites' : 'Document removed from Favorites'}`,
                             statusCode: 200,
-                            data: updated[0],
                         }),
                         200
                     );

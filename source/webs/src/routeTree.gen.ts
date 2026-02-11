@@ -16,7 +16,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as authLayoutRouteImport } from './routes/(auth)/_layout'
 import { Route as authLayoutTrashRouteImport } from './routes/(auth)/_layout/trash'
 import { Route as authLayoutSettingsRouteImport } from './routes/(auth)/_layout/settings'
-import { Route as authLayoutNotificationsRouteImport } from './routes/(auth)/_layout/notifications'
 import { Route as authLayoutLogoutRouteImport } from './routes/(auth)/_layout/logout'
 import { Route as authLayoutFavoritesRouteImport } from './routes/(auth)/_layout/favorites'
 import { Route as authLayoutDocumentsRouteImport } from './routes/(auth)/_layout/documents'
@@ -59,11 +58,6 @@ const authLayoutTrashRoute = authLayoutTrashRouteImport.update({
 const authLayoutSettingsRoute = authLayoutSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => authLayoutRoute,
-} as any)
-const authLayoutNotificationsRoute = authLayoutNotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
   getParentRoute: () => authLayoutRoute,
 } as any)
 const authLayoutLogoutRoute = authLayoutLogoutRouteImport.update({
@@ -122,7 +116,6 @@ export interface FileRoutesByFullPath {
   '/documents': typeof authLayoutDocumentsRoute
   '/favorites': typeof authLayoutFavoritesRoute
   '/logout': typeof authLayoutLogoutRoute
-  '/notifications': typeof authLayoutNotificationsRoute
   '/settings': typeof authLayoutSettingsRoute
   '/trash': typeof authLayoutTrashRoute
   '/projects/$projectId': typeof authLayoutProjectsProjectIdRoute
@@ -140,7 +133,6 @@ export interface FileRoutesByTo {
   '/documents': typeof authLayoutDocumentsRoute
   '/favorites': typeof authLayoutFavoritesRoute
   '/logout': typeof authLayoutLogoutRoute
-  '/notifications': typeof authLayoutNotificationsRoute
   '/settings': typeof authLayoutSettingsRoute
   '/trash': typeof authLayoutTrashRoute
   '/projects/$projectId': typeof authLayoutProjectsProjectIdRoute
@@ -160,7 +152,6 @@ export interface FileRoutesById {
   '/(auth)/_layout/documents': typeof authLayoutDocumentsRoute
   '/(auth)/_layout/favorites': typeof authLayoutFavoritesRoute
   '/(auth)/_layout/logout': typeof authLayoutLogoutRoute
-  '/(auth)/_layout/notifications': typeof authLayoutNotificationsRoute
   '/(auth)/_layout/settings': typeof authLayoutSettingsRoute
   '/(auth)/_layout/trash': typeof authLayoutTrashRoute
   '/(auth)/_layout/projects/$projectId': typeof authLayoutProjectsProjectIdRoute
@@ -180,7 +171,6 @@ export interface FileRouteTypes {
     | '/documents'
     | '/favorites'
     | '/logout'
-    | '/notifications'
     | '/settings'
     | '/trash'
     | '/projects/$projectId'
@@ -198,7 +188,6 @@ export interface FileRouteTypes {
     | '/documents'
     | '/favorites'
     | '/logout'
-    | '/notifications'
     | '/settings'
     | '/trash'
     | '/projects/$projectId'
@@ -217,7 +206,6 @@ export interface FileRouteTypes {
     | '/(auth)/_layout/documents'
     | '/(auth)/_layout/favorites'
     | '/(auth)/_layout/logout'
-    | '/(auth)/_layout/notifications'
     | '/(auth)/_layout/settings'
     | '/(auth)/_layout/trash'
     | '/(auth)/_layout/projects/$projectId'
@@ -287,13 +275,6 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof authLayoutSettingsRouteImport
-      parentRoute: typeof authLayoutRoute
-    }
-    '/(auth)/_layout/notifications': {
-      id: '/(auth)/_layout/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof authLayoutNotificationsRouteImport
       parentRoute: typeof authLayoutRoute
     }
     '/(auth)/_layout/logout': {
@@ -367,7 +348,6 @@ interface authLayoutRouteChildren {
   authLayoutDocumentsRoute: typeof authLayoutDocumentsRoute
   authLayoutFavoritesRoute: typeof authLayoutFavoritesRoute
   authLayoutLogoutRoute: typeof authLayoutLogoutRoute
-  authLayoutNotificationsRoute: typeof authLayoutNotificationsRoute
   authLayoutSettingsRoute: typeof authLayoutSettingsRoute
   authLayoutTrashRoute: typeof authLayoutTrashRoute
   authLayoutProjectsProjectIdRoute: typeof authLayoutProjectsProjectIdRoute
@@ -379,7 +359,6 @@ const authLayoutRouteChildren: authLayoutRouteChildren = {
   authLayoutDocumentsRoute: authLayoutDocumentsRoute,
   authLayoutFavoritesRoute: authLayoutFavoritesRoute,
   authLayoutLogoutRoute: authLayoutLogoutRoute,
-  authLayoutNotificationsRoute: authLayoutNotificationsRoute,
   authLayoutSettingsRoute: authLayoutSettingsRoute,
   authLayoutTrashRoute: authLayoutTrashRoute,
   authLayoutProjectsProjectIdRoute: authLayoutProjectsProjectIdRoute,

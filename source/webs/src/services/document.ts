@@ -101,17 +101,16 @@ export async function getAllFavoriteDocs(params: z.infer<typeof documentPaginati
     }
 };
 
-// export async function postDoc(): Promise<> {
-//     try {
-//         const res = await http.post('auth', { json: { pin } }).json<RegisterResType>();
-//         return res;
-//     } catch (error) {
-//         if (error instanceof HTTPError) {
-//             const errorBody = await error.response.json<GeneralErrorResponseType>();
-//             throw new Error(`${errorBody.message} - ${errorBody.payload}`);
-//         } else {
-//             console.error('[authentication] Unexpected Error:', error);
-//             throw new Error('Unexpected error occurred');
-//         }
-//     }
-// }
+export async function toggleDocFav(id: string) {
+    try {
+        return await http.patch(`api/document/${id}/favorite`).json<ApiResponse<typeof document.$inferSelect[]>>();
+    } catch (error) {
+        if (error instanceof HTTPError) {
+            const errorBody = await error.response.json();
+            throw new Error(`${errorBody.message} - ${errorBody.payload}`);
+        } else {
+            console.error('[postDoc] Unexpected Error:', error);
+            throw new Error('Unexpected error occurred');
+        }
+    }
+};

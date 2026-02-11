@@ -1,4 +1,4 @@
-import { Bell, Bolt, FileHeart, Folder,  LayoutDashboard, Trash2 ,File} from "lucide-react";
+import { Bolt, FileHeart, Folder,  LayoutDashboard, Trash2 ,File} from "lucide-react";
 
 // Sidebar Menu Links
 export const MenuLinks = [
@@ -22,11 +22,12 @@ export const MenuLinks = [
     url: "/favorites",
     icon: FileHeart,
   },
-  {
-    title: "notifications",
-    url: "/notifications",
-    icon: Bell,
-  },
+  // ? in v2 will add
+  // {
+  //   title: "notifications",
+  //   url: "/notifications",
+  //   icon: Bell,
+  // },
   {
     title: "settings",
     url: "/settings",

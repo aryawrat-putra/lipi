@@ -1,15 +1,39 @@
 import { Link } from '@tanstack/react-router'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
-import { FileHeart, FilePen, FilePenLine, GalleryHorizontalEnd, GripVertical, SquareArrowOutUpRight, Trash2 } from 'lucide-react'
-
-import { document } from '../../../../api/src/db/schema';
+import { FileHeart, FileOutput, FilePen, FilePenLine, GalleryHorizontalEnd, GripVertical, SquareArrowOutUpRight, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { formatDistanceToNowStrict } from 'date-fns'
 
-export default function DocumentCard({ id, title, updatedAt, allVersionsIds }: typeof document.$inferSelect) {
+import { document } from '../../../../api/src/db/schema';
+import { toggleDocFav } from '@/services/document'
+
+export default function DocumentCard({ id, title, updatedAt, allVersionsIds, isFavorite }: typeof document.$inferSelect) {
+    const queryClient = useQueryClient();
+
+    const favoriteToggle = useMutation({
+        mutationKey: ['toggle-fav', id],
+        mutationFn: () => toggleDocFav(id!),
+        onSuccess: ({ message , data, statusCode , success , errors, meta}) => {
+            console.log({message, data, statusCode , success , errors, meta})
+            // ? Inform user
+            toast.success(message);
+            // ? Update screen data
+            queryClient.invalidateQueries({
+                queryKey: ['all-documents'],
+            });
+        },
+        onError: (e) => {
+            console.error('Failed to create doc!!!')
+            console.error(e);
+            toast.error(e.message);
+        }
+    });
+
     return (
         <ContextMenu>
             <ContextMenuTrigger>
@@ -27,7 +51,23 @@ export default function DocumentCard({ id, title, updatedAt, allVersionsIds }: t
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align='end'>
                                         <DropdownMenuItem onClick={(e) => e.stopPropagation()}><FilePen /> Rename</DropdownMenuItem>
-                                        <DropdownMenuItem onClick={(e) => e.stopPropagation()} className='text-primary'><FileHeart className='text-primary' /> Favorite</DropdownMenuItem>
+                                        {isFavorite ? (
+                                            <DropdownMenuItem
+                                                disabled={favoriteToggle.isPending}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    favoriteToggle.mutate();
+                                                }}
+                                                className='text-primary'><FileOutput /> Unfavorite</DropdownMenuItem>
+                                        ) : (
+                                            <DropdownMenuItem
+                                                disabled={favoriteToggle.isPending}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    favoriteToggle.mutate();
+                                                }}
+                                                className='text-primary'><FileHeart className='text-primary' /> Favorite</DropdownMenuItem>
+                                        )}
                                         <DropdownMenuItem onClick={(e) => e.stopPropagation()} asChild>
                                             <Link to={`/editor/$docId`} params={{ docId: id! }} target='_blank'><SquareArrowOutUpRight /> Open in new tab</Link>
                                         </DropdownMenuItem>
