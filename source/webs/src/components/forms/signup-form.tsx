@@ -14,7 +14,7 @@ import { authClient } from "@/lib/auth-client";
 
 import { UserSchema } from "@/types"
 import type z from "zod"
-import { Spinner } from "../ui/spinner"
+import { Spinner } from "@/components/ui/spinner"
 import { useNavigate } from "@tanstack/react-router"
 
 export function SignupForm({

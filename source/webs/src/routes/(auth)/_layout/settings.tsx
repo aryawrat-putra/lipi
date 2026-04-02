@@ -5,10 +5,9 @@ export const Route = createFileRoute('/(auth)/_layout/settings')({
 })
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { UserRoundPen, Palette, FolderSync, BellRing } from 'lucide-react'
+import { UserRoundPen, Palette, FolderSync} from 'lucide-react'
 import { ProfileSettings } from '@/components/forms/settings/profile'
 import { PreferencesSettings } from '@/components/forms/settings/preferences'
-import { NotificationSettings } from '@/components/forms/settings/notifications'
 import { AdvancedSettings } from '@/components/forms/settings/advanced'
 
 function RouteComponent() {
@@ -26,7 +25,6 @@ function RouteComponent() {
             <TabsList className='flex-wrap h-auto md:space-x-2 lg:space-x-4 max-sm:space-y-1'>
               <TabsTrigger value="profile"><UserRoundPen className="mr-1 text-muted-foreground" /> Profile</TabsTrigger>
               <TabsTrigger value="preferences"><Palette className="mr-1 text-muted-foreground" />Preferences</TabsTrigger>
-              <TabsTrigger value="notifications"><BellRing className="mr-1 text-muted-foreground" />Notifications</TabsTrigger>
               <TabsTrigger value="advanced"><FolderSync className="mr-1 text-muted-foreground" />Advanced</TabsTrigger>
             </TabsList>
           </div>
@@ -34,7 +32,6 @@ function RouteComponent() {
 
         <TabsContent value="profile"><ProfileSettings /></TabsContent>
         <TabsContent value="preferences"><PreferencesSettings /></TabsContent>
-        <TabsContent value="notifications"><NotificationSettings /></TabsContent>
         <TabsContent value="advanced"><AdvancedSettings /></TabsContent>
       </Tabs>
     </main >

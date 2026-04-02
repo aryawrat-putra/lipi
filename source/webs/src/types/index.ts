@@ -14,3 +14,23 @@ export const UserLoginSchema = z.object({
 });
 
 export type UserCreate = z.infer<typeof UserSchema>;
+
+
+export const ProfileUpdateSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    image: z.any().optional(),
+})
+
+export const EmailUpdateSchema = z.object({
+    email: z.string().email("Enter a valid email address"),
+})
+
+
+export const PasswordUpdateSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z.string().min(8, "Must be at least 8 characters"),
+  confirmPassword: z.string(),
+}).refine((d) => d.newPassword === d.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+})

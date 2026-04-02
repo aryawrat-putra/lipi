@@ -39,7 +39,11 @@ export default function CreateProjectForm() {
         }),
         onSuccess: ({ data }) => {
             // ? Navigate user to project link 
-            navigate({ to: `/projects/$projectId`, params: { projectId: data![0].id! } });
+            navigate({
+                to: `/projects/$projectId`,
+                params: { projectId: data![0].id! },
+                search: { limit: 10, page: 1, sortBy: 'createdAt', sortOrder: 'desc' }
+            });
 
             // ? Close the dialog
             setDialogOpen(false);

@@ -15,14 +15,17 @@ export const Route = createRootRoute({
 
     const publicPaths = ['/', '/login', '/signup', '/recover'];
     const isPublicPath = publicPaths.includes(location.pathname);
-    const isAuthenticated = !!session?.user;
 
-    if (isAuthenticated && isPublicPath) {
-      throw redirect({ to: '/dashboard' })
-    }
-
-    if (!isAuthenticated && !isPublicPath) {
-      throw redirect({ to: '/login', href: location.href })
+    if (!session && !isPublicPath) {
+      // ? Only redirect if not already going to /login
+      if (location.pathname !== '/login') {
+        throw redirect({ to: '/login' });
+      }
+    } else if (session && isPublicPath) {
+      // ? Only redirect if not already going to /dashboard
+      if (location.pathname !== '/dashboard') {
+        throw redirect({ to: '/dashboard' });
+      }
     }
   },
   notFoundComponent: () => <NotFoundPage />,
@@ -33,17 +36,19 @@ function RootLayout() {
   return (
     <>
       <Outlet />
-      <Toaster />
+      < Toaster />
       <TanStackDevtools
         config={{
           position: 'bottom-right',
-        }}
-        plugins={[
-          {
-            name: 'Tanstack Router',
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-        ]}
+        }
+        }
+        plugins={
+          [
+            {
+              name: 'Tanstack Router',
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+          ]}
       />
     </>
   )
