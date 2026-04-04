@@ -11,6 +11,7 @@ declare module 'hono' {
   }
 };
 
+import { userController } from "@/controllers/user";
 import { projectController } from "@/controllers/project";
 import { documentController } from "@/controllers/document";
 import { documentVersionController } from "@/controllers/document-version";
@@ -42,6 +43,7 @@ app
     c.json({ status: 'ok', service: 'lipi-api' })
   )
   .use('/api/*', CheckAuthenticity)
+  .route('/api/user', userController)
   .route('/api/project', projectController)
   .route('/api/document', documentController)
   .route('/api/document-version', documentVersionController)

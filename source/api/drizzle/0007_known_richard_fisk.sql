@@ -1,0 +1,1 @@
+ALTER TABLE "document" ADD COLUMN "is_locked" boolean DEFAULT false NOT NULL;

@@ -108,6 +108,7 @@ export const document = pgTable('document', {
   isPublished: boolean('is_published').default(false).notNull(),
   isFavorite: boolean('is_favorite').default(false).notNull(),
   publishedAt: timestamp('published_at'),
+  isLocked: boolean('is_locked').notNull().default(false),
   lockedByUserId: text('locked_by_user_id').references(() => user.id, { onDelete: 'set null' }),
   lockedAt: timestamp('locked_at'),
   createdAt: timestamp("created_at").defaultNow().notNull(),

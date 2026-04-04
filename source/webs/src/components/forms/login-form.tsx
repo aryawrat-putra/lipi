@@ -30,7 +30,7 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
 
   const form = useForm<z.infer<typeof UserLoginSchema>>({
     resolver: standardSchemaResolver(UserLoginSchema)

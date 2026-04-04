@@ -28,11 +28,11 @@ export default function DocumentCard({ id, title, updatedAt, allVersionsIds, isF
             });
         },
         onError: (e) => {
-            console.error('Failed to create doc!!!')
+            console.error('Failed to update doc!!!')
             console.error(e);
             toast.error(e.message);
         }
-    });
+    }); 
 
     return (
         <ContextMenu>

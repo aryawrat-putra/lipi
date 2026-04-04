@@ -423,7 +423,7 @@ export const documentController = new Hono()
                 );
             }
         }
-    )
+    ) 
     // ? Update a document with :docId
     .patch(
         '/:docId',

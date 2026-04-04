@@ -9,7 +9,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
     "outDir": "./dist",
-
+    "ignoreDeprecations": "6.0", // added cause baseurl is deprecated
     "baseUrl": "./src/",
     "paths": {
       "@/*": ["./*"]

@@ -125,7 +125,7 @@ function ProfileInfoSection() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
                 {/* Avatar Preview */}
-                <div className="flex items-center gap-4 mb-2">
+                <div className="flex items-center gap-4 mb-2"> 
                     <Avatar className="size-14">
                         <AvatarImage
                             src={user?.image ?? ""}

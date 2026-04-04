@@ -2,11 +2,11 @@ import http from '@/lib/http';
 import { HTTPError } from 'ky';
 
 import { document } from '../../../api/src/db/schema';
-import { type ApiResponse } from '../../../api/src/constants/types';
+import { type ApiResponse, updateDocumentSchema } from '../../../api/src/constants/types';
 
 export async function postDoc() {
     try {
-        return await http.post('api/document',).json<ApiResponse<typeof document.$inferSelect[]>>();
+        return await http.post('api/document').json<ApiResponse<typeof document.$inferSelect[]>>();
     } catch (error) {
         if (error instanceof HTTPError) {
             const errorBody = await error.response.json();
@@ -79,6 +79,20 @@ export async function getAllDocsOfProjectId({ params, id }: { params: z.infer<ty
     }
 };
 
+export async function getDocById(id: string) {
+    try {
+        return await http.get(`api/document/${id}`).json<ApiResponse<typeof document.$inferSelect[]>>();
+    } catch (error) {
+        if (error instanceof HTTPError) {
+            const errorBody = await error.response.json();
+            throw new Error(`${errorBody.message} - ${errorBody.payload}`);
+        } else {
+            console.error('[postDoc] Unexpected Error:', error);
+            throw new Error('Unexpected error occurred');
+        }
+    }
+};
+
 export async function getAllFavoriteDocs(params: z.infer<typeof documentPaginationAndFilters>) {
     try {
         return await http.get('api/document/favorites', {
@@ -104,6 +118,20 @@ export async function getAllFavoriteDocs(params: z.infer<typeof documentPaginati
 export async function toggleDocFav(id: string) {
     try {
         return await http.patch(`api/document/${id}/favorite`).json<ApiResponse<typeof document.$inferSelect[]>>();
+    } catch (error) {
+        if (error instanceof HTTPError) {
+            const errorBody = await error.response.json();
+            throw new Error(`${errorBody.message} - ${errorBody.payload}`);
+        } else {
+            console.error('[postDoc] Unexpected Error:', error);
+            throw new Error('Unexpected error occurred');
+        }
+    }
+};
+
+export async function updateDocById({ data, id }: { data: z.infer<typeof updateDocumentSchema>, id: string }) {
+    try {
+        return await http.patch(`api/document/${id}`, { json: data }).json<ApiResponse<typeof document.$inferInsert[]>>();
     } catch (error) {
         if (error instanceof HTTPError) {
             const errorBody = await error.response.json();

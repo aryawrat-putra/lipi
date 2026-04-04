@@ -27,7 +27,7 @@ function DocumentPage() {
   const { isPending, error, data, isSuccess } = useQuery({
     queryKey: ['all-documents', page, search, sortBy, sortOrder, limit],
     queryFn: () => getAllDocs({ page, search, sortBy, sortOrder, limit }),
-  });
+  }); 
 
   if (isPending) return <Loading />
   if (error) return <SomethingWentWrong />
